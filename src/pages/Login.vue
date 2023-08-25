@@ -22,68 +22,74 @@
           Sign up
         </span>
       </div>
-      <q-input
-        v-show="!state.pageLogin"
-        rounded
-        standout
-        v-model="state.first_name"
-        class="q-pa-md"
-        placeholder="First name"
-        bg-color="primary"
-        :input-style="{ color: 'white' }"
-      />
-      <q-input
-        v-show="!state.pageLogin"
-        rounded
-        standout
-        v-model="state.last_name"
-        class="q-pa-md"
-        placeholder="Last name"
-        color="white"
-        bg-color="primary"
-        :input-style="{ color: 'white' }"
-      />
-      <q-input
-        rounded
-        standout
-        v-model="state.email"
-        class="q-pa-md"
-        placeholder="Email"
-        color="white"
-        type="email"
-        bg-color="primary"
-        :input-style="{ color: 'white' }"
-      />
-
-      <q-input
-        rounded
-        standout
-        v-model="state.pass"
-        class="q-pa-md inputs-login"
-        placeholder="Password"
-        :type="state.showPassword ? 'text' : 'password'"
-        color="white"
-        bg-color="primary"
-        :input-style="{ color: 'white' }"
+      <q-form
+        @submit="LoginRegister()"
+        style="width: 80%"
+        class="flex flex-center"
       >
-        <template v-slot:append>
-          <q-icon
-            :name="state.showPassword ? 'visibility_off' : 'visibility'"
-            @click="() => (state.showPassword = !state.showPassword)"
-            class="cursor-pointer"
-          />
-        </template>
-      </q-input>
+        <q-input
+          v-show="!state.pageLogin"
+          rounded
+          standout
+          v-model="state.first_name"
+          class="q-pa-md"
+          placeholder="First name"
+          bg-color="primary"
+          :input-style="{ color: 'white' }"
+        />
+        <q-input
+          v-show="!state.pageLogin"
+          rounded
+          standout
+          v-model="state.last_name"
+          class="q-pa-md"
+          placeholder="Last name"
+          color="white"
+          bg-color="primary"
+          :input-style="{ color: 'white' }"
+        />
+        <q-input
+          rounded
+          standout
+          v-model="state.email"
+          class="q-pa-md"
+          placeholder="Email"
+          color="white"
+          type="email"
+          bg-color="primary"
+          :input-style="{ color: 'white', width: '250px' }"
+        />
 
-      <p v-show="state.alert" class="text-red">Preencha todos os campos!</p>
-      <q-btn
-        color="accent"
-        style="width: 45%"
-        size="md"
-        class="q-pa-md q-mt-lg"
-        :label="state.pageLogin ? 'Login' : 'Register'"
-        @click="LoginRegister()"
-      />
+        <q-input
+          rounded
+          standout
+          v-model="state.pass"
+          class="q-pa-md inputs-login"
+          placeholder="Password"
+          :type="state.showPassword ? 'text' : 'password'"
+          color="white"
+          bg-color="primary"
+          :input-style="{ color: 'white' }"
+        >
+          <template v-slot:append>
+            <q-icon
+              :name="state.showPassword ? 'visibility_off' : 'visibility'"
+              @click="() => (state.showPassword = !state.showPassword)"
+              class="cursor-pointer"
+            />
+          </template>
+        </q-input>
+
+        <p v-show="state.alert" class="text-red">Preencha todos os campos!</p>
+        <q-btn
+          color="accent"
+          style="width: 45%"
+          size="md"
+          type="submit"
+          class="q-pa-md q-mt-lg"
+          :label="state.pageLogin ? 'Login' : 'Register'"
+        />
+      </q-form>
     </div>
   </q-layout>
 </template>
@@ -111,13 +117,15 @@ export default defineComponent({
     });
 
     const router = useRouter();
+
     async function LoginRegister() {
-      showLoading("Carregando");
+      showLoading("Loading...");
       let data = {
         first_name: state.first_name,
         last_name: state.last_name,
         email: state.email,
         password: state.pass,
+        img: "https://hubs.belmontforum.org/wp-content/plugins/buddyboss-platform/bp-core/images/profile-avatar-buddyboss.png",
       };
       try {
         const { email, pass, first_name, last_name } = state;
@@ -127,9 +135,10 @@ export default defineComponent({
             return;
           }
           state.userData = await Login(data);
-          state.userData.success ? router.push("/home") : "";
+          state.userData.data.success ? router.push("/home") : "";
 
-          LocalStorage.set("iduser", state.userData.data.ID);
+          LocalStorage.set("iduser", state.userData.data.data.ID);
+          LocalStorage.set("token", state.userData.token);
         } else {
           if (!email || !pass || !first_name || !last_name) {
             state.alert = true;

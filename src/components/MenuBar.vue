@@ -6,15 +6,15 @@
           <q-icon color="white" name="chat_bubble_outline" />
         </q-item-section>
 
-        <q-item-section style="color: white" @click="viewPost(id)">
-          {{ message }}
+        <q-item-section style="color: white" @click="viewPost(op.ID)">
+          {{ op.message }}
         </q-item-section>
         <q-btn
           flat
           round
           color="white"
           icon="delete"
-          @click="deleteMyPost(id)"
+          @click="deleteMyPost(op.ID)"
         />
       </div>
     </q-item>
@@ -22,16 +22,17 @@
   <q-dialog v-model="state.openDialogPost">
     <ViewQuestion
       :postDetail="state.postDetail"
-      @close-dialog="state.openDialogPost = false"
+      :userData="userData"
+      @closeDialog="state.openDialogPost = false"
     />
   </q-dialog>
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from "vue";
 import ViewQuestion from "./ViewQuestion.vue";
+import { defineComponent, reactive, ref } from "vue";
 import { getDetailPost, deletePost } from "../service/post";
-import { hideLoading, showLoading, showNegativeNotify } from "src/util/plugins";
+import { hideLoading, showLoading } from "src/util/plugins";
 
 export default defineComponent({
   name: "MenuBar",
@@ -40,12 +41,11 @@ export default defineComponent({
   },
 
   props: {
-    message: {
-      type: String,
-      default: "",
+    op: {
+      type: Object,
     },
-    id: {
-      type: Number,
+    userData: {
+      type: Object,
     },
   },
   emits: ["reloadList"],
@@ -57,14 +57,14 @@ export default defineComponent({
     });
 
     async function viewPost(idpost) {
-      showLoading("Carregando...");
+      showLoading("Loading...");
       state.postDetail = await getDetailPost(idpost);
       state.openDialogPost = true;
       hideLoading();
     }
 
     async function deleteMyPost(idpost) {
-      showLoading("Carregando...");
+      showLoading("Loading...");
       await deletePost(idpost);
       ctx.emit("reloadList");
       hideLoading();

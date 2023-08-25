@@ -29,7 +29,6 @@ body {
 
 .questions-menu {
   background-color: #272424;
-  border-radius: 10px;
   width: 100%;
   max-width: 100%;
   box-shadow: rgba(39, 36, 36) 0px 5px 10px;
@@ -71,9 +70,8 @@ body {
 }
 
 .questions {
-  background-color: rgba(39, 36, 36, 0.7);
   border-radius: 10px;
-  width: 80%;
+  width: 100%;
   box-shadow: rgba(39, 36, 36) 0px 10px 30px;
 
   p {
@@ -85,6 +83,7 @@ body {
   color: white;
   border-radius: 10px;
   cursor: pointer;
+  background-color: rgba(39, 36, 36, 0.7);
 
   &:hover {
     background-color: rgba(39, 36, 36, 1) !important;
@@ -109,8 +108,28 @@ body {
   height: 360px;
 }
 
-.bottom-right-btn {
+.fixed-btn {
   position: fixed;
-  bottom: 20px; /* Ajuste a distância a partir da parte inferior */
-  right: 20px; /* Ajuste a distância a partir da parte direita */
+  bottom: 20px;
+  right: 380px;
+}
+
+@media (max-width: 1024px) {
+  .fixed-btn {
+    right: 20px;
+  }
+}
+
+.img-profile {
+  width: 300px;
+  cursor: pointer;
+  border-radius: 50%;
+
+  &:hover {
+    opacity: 0.3;
+  }
+}
+
+.q-menu {
+  max-height: 15rem;
 }

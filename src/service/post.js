@@ -2,9 +2,12 @@ import axios from "axios";
 import { LocalStorage } from "quasar";
 import { showNegativeNotify, showPositiveNotify } from "src/util/plugins";
 
+const headers = {
+  Authorization: LocalStorage.getItem("token")
+}
 
 export function getUser() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/user/${LocalStorage.getItem("iduser")}`)
+  return axios.get(`${process.env.APP_ROUTER}/v1/user/${LocalStorage.getItem("iduser")}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data;
@@ -20,7 +23,7 @@ export function getUser() {
 }
 
 export function getUserPost() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/posts/${LocalStorage.getItem("iduser")}`)
+  return axios.get(`${process.env.APP_ROUTER}/v1/posts/${LocalStorage.getItem("iduser")}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data;
@@ -36,7 +39,7 @@ export function getUserPost() {
 }
 
 export function getPosts() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/posts`)
+  return axios.get(`${process.env.APP_ROUTER}/v1/posts`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data
@@ -51,8 +54,40 @@ export function getPosts() {
     });
 }
 
+export function getDetailPost(idpost) {
+  return axios.get(`${process.env.APP_ROUTER}/v1/post/${idpost}`, { headers: headers })
+    .then((response) => {
+      if (response.data.success) {
+        return response.data.data[0]
+      } else {
+        showNegativeNotify(response.data.message);
+        throw new Error(response.data.message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error during API query:', error);
+      throw error;
+    });
+}
+
+export function getResponsesPost(idpost) {
+  return axios.get(`${process.env.APP_ROUTER}/v1/responses/${idpost}`, { headers: headers })
+    .then((response) => {
+      if (response.data.success) {
+        return response.data.data
+      } else {
+        showNegativeNotify(response.data.message);
+        throw new Error(response.data.message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error during API query:', error);
+      throw error;
+    });
+}
+
 export function createPost(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/post`, data)
+  return axios.post(`${process.env.APP_ROUTER}/v1/post`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -69,7 +104,7 @@ export function createPost(data) {
 }
 
 export function createResponse(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/response`, data)
+  return axios.post(`${process.env.APP_ROUTER}/v1/response`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -85,11 +120,11 @@ export function createResponse(data) {
     });
 }
 
-export function getDetailPost(idpost) {
-  return axios.get(`${process.env.APP_ROUTER}/v1/post/${idpost}`)
+export function emailEdit(data) {
+  return axios.put(`${process.env.APP_ROUTER}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
-        return response.data.data[0]
+        showPositiveNotify(response.data.message);
       } else {
         showNegativeNotify(response.data.message);
         throw new Error(response.data.message);
@@ -101,11 +136,11 @@ export function getDetailPost(idpost) {
     });
 }
 
-export function getResponsesPost(idpost) {
-  return axios.get(`${process.env.APP_ROUTER}/v1/responses/${idpost}`)
+export function imgEdit(data) {
+  return axios.put(`${process.env.APP_ROUTER}/v1/img/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
-        return response.data.data
+        showPositiveNotify(response.data.message);
       } else {
         showNegativeNotify(response.data.message);
         throw new Error(response.data.message);
@@ -118,7 +153,7 @@ export function getResponsesPost(idpost) {
 }
 
 export function deletePost(idpost) {
-  return axios.delete(`${process.env.APP_ROUTER}/v1/post/${idpost}`)
+  return axios.delete(`${process.env.APP_ROUTER}/v1/post/${idpost}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Post successfully deleted");
@@ -133,4 +168,18 @@ export function deletePost(idpost) {
     });
 }
 
-
+export function deleteResponse(idresponse) {
+  return axios.delete(`${process.env.APP_ROUTER}/v1/response/${idresponse}`, { headers: headers })
+    .then((response) => {
+      if (response.data.success) {
+        showPositiveNotify("Response successfully deleted");
+      } else {
+        showNegativeNotify(response.data.message);
+        throw new Error(response.data.message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error during API query:', error);
+      throw error;
+    });
+}

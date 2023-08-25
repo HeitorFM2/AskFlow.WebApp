@@ -1,32 +1,52 @@
 <template>
   <q-page>
-    <div class="column flex-center">
-      <q-input
-        rounded
+    <div class="column flex-center q-pa-md">
+      <q-select
         standout
+        dense
         v-model="state.search"
-        placeholder="Search"
-        color="white"
+        :options="optionsPost"
+        option-label="message"
+        options-value="ID"
         style="width: 70%"
         bg-color="primary"
-        :input-style="{ color: 'white' }"
+        hide-dropdown-icon
+        use-input
+        @update:model-value="
+          (state.postDetail = state.search), (state.openDialogPost = true)
+        "
+        @filter="filterPost"
+        popup-content-style="background-color: rgb(39, 36, 36);"
       >
         <template v-slot:prepend>
           <q-icon name="search" color="white" />
         </template>
-        <template v-slot:append v-if="state.search != ''">
+        <template v-if="state.search" v-slot:append>
           <q-icon
-            name="close"
-            @click="state.search = ''"
+            name="cancel"
+            @click.stop.prevent="state.search = ''"
             class="cursor-pointer"
           />
         </template>
-      </q-input>
+        <template v-slot:option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section>
+              <q-item-label caption class="text-white"
+                >{{ scope.opt.first_name }}
+                {{ scope.opt.last_name }}</q-item-label
+              >
+              <q-item-label class="text-white">
+                {{ scope.opt.message }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
 
       <div class="questions q-mt-xl q-pa-lg">
         <p class="text-center text-h5 text-weight-medium q-pd-md">Feed</p>
         <q-card
-          class="bg-secondary q-ma-lg card-questions"
+          class="q-ma-lg card-questions"
           v-for="(q, index) in state.posts"
           :key="index"
           @click="(state.postDetail = q), (state.openDialogPost = true)"
@@ -35,7 +55,7 @@
             <q-item>
               <q-item-section avatar>
                 <q-avatar>
-                  <q-img src="../assets/imgs/img.jpg" :ratio="1" />
+                  <q-img :src="q.img" :ratio="1" />
                 </q-avatar>
               </q-item-section>
               <q-item-section
@@ -52,52 +72,94 @@
           </q-tooltip>
         </q-card>
       </div>
-      <q-btn
-        class="bottom-right-btn"
-        round
-        color="primary"
-        icon="shopping_cart"
-      />
     </div>
-    <q-dialog v-model="state.onDialogHide">
-      <q-card class="bg-primary text-white dialog-response">
-        <q-card-section>
-          <div class="text-h6 text-center">Your answer</div>
-          <q-input
-            v-model="state.messageReponse"
-            borderless
-            color="white"
-            type="textarea"
-            placeholder="Make your answer.."
-            :input-style="{
-              resize: 'none',
-              height: '220px',
-              color: 'white',
-            }"
-          />
-        </q-card-section>
-        <q-card-actions align="right" class="q-pa-md">
-          <q-btn
-            label="Close"
-            color="secondary"
-            @click="state.onDialogHide = false"
-          />
-          <q-btn label="Confirm" color="secondary" @click="sendResponse()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-    <q-dialog v-model="state.openDialogPost">
-      <view-question
-        :postDetail="state.postDetail"
-        @close-dialog="state.openDialogPost = false"
-      />
-    </q-dialog>
+    <q-btn
+      class="fixed-btn"
+      round
+      color="accent"
+      icon="add"
+      size="lg"
+      @click="state.openNewPost = true"
+    >
+      <q-tooltip class="bg-primary" :offset="[10, 10]"> Add post </q-tooltip>
+    </q-btn>
   </q-page>
+
+  <q-dialog v-model="state.onDialogHide">
+    <q-card class="bg-primary text-white dialog-response">
+      <q-card-section>
+        <div class="text-h6 text-center">Your answer</div>
+        <q-input
+          v-model="state.messageReponse"
+          borderless
+          color="white"
+          type="textarea"
+          placeholder="Make your answer.."
+          :input-style="{
+            resize: 'none',
+            height: '220px',
+            color: 'white',
+          }"
+        />
+      </q-card-section>
+      <q-card-actions align="right" class="q-pa-md">
+        <q-btn
+          label="Close"
+          color="secondary"
+          @click="state.onDialogHide = false"
+        />
+        <q-btn label="Confirm" color="secondary" @click="sendResponse()" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="state.openDialogPost">
+    <ViewQuestion
+      :postDetail="state.postDetail"
+      :userData="userData"
+      @close-dialog="state.openDialogPost = false"
+    />
+  </q-dialog>
+
+  <q-dialog v-model="state.openNewPost">
+    <q-card class="send-question bg-secondary q-ma-md q-pa-md">
+      <div class="flex justify-between">
+        <q-item class="text-white">
+          <q-item-section avatar>
+            <q-avatar>
+              <q-img :src="userData.img" :ratio="1" />
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section class="text-subtitle1"
+            >{{ userData.first_name }} {{ userData.last_name }}</q-item-section
+          >
+        </q-item>
+      </div>
+
+      <q-input
+        v-model="state.messageBody"
+        borderless
+        color="white"
+        type="textarea"
+        placeholder="Ask your question..."
+        :input-style="{
+          resize: 'none',
+          height: '220px',
+          color: 'white',
+        }"
+      />
+      <p class="text-red text-center" v-if="state.errorBody">Empty message!</p>
+      <q-card-actions align="right">
+        <q-btn push color="accent" round icon="send" @click="createNewPost()" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
 import { defineComponent, reactive, ref, onBeforeMount } from "vue";
-import { getPosts, createResponse } from "../service/post";
+import { getPosts, createPost } from "../service/post";
 import { LocalStorage } from "quasar";
 import ViewQuestion from "src/components/ViewQuestion.vue";
 import { hideLoading, showLoading, showNegativeNotify } from "src/util/plugins";
@@ -108,14 +170,22 @@ export default defineComponent({
   components: {
     ViewQuestion,
   },
+  props: {
+    userData: {
+      type: Object,
+    },
+  },
 
-  setup() {
+  emits: ["reloadList"],
+
+  setup(props, ctx) {
     const state = reactive({
       posts: ref([]),
       postDetail: [],
       search: ref(""),
       messageBody: ref(""),
       messageReponse: ref(""),
+      openNewPost: ref(false),
       onDialogHide: ref(false),
       openDialogPost: ref(false),
     });
@@ -125,7 +195,7 @@ export default defineComponent({
     });
 
     async function list() {
-      showLoading("Carregando...");
+      showLoading("Loading...");
       state.posts = [];
       try {
         let response = await getPosts();
@@ -137,47 +207,57 @@ export default defineComponent({
       }
     }
 
-    async function sendQuestion() {
-      showLoading("Carregando...");
+    async function createNewPost() {
+      if (state.messageBody == "") {
+        state.errorBody = true;
+        return;
+      }
+      showLoading("Loading...");
       try {
         let data = {
-          message: state.messageBody,
           iduser: parseInt(LocalStorage.getItem("iduser")),
+          message: state.messageBody,
         };
 
-        await createResponse(data);
+        await createPost(data);
         list();
+        ctx.emit("reloadList");
       } catch (error) {
         console.warn(error);
         showNegativeNotify("Ocorreu um erro!");
       }
+      state.openNewPost = false;
+      state.messageBody = "";
       hideLoading();
     }
 
-    async function sendResponse() {
-      showLoading("Carregando...");
-      try {
-        let data = {
-          message: state.messageBody,
-          iduser: state.postDetail.iduser,
-          idquestion: state.postDetail.ID,
-        };
-        await createResponse(data);
-        list();
+    const optionsPost = ref(state.posts);
 
-        this.$emit("reload-list");
-        state.onDialogHide = false;
-      } catch (error) {
-        console.warn(error);
-        showNegativeNotify("Ocorreu um erro!");
+    async function filterPost(val, update) {
+      if (val === "") {
+        update(() => {
+          optionsPost.value = state.posts;
+        });
+        return;
       }
-      hideLoading();
+
+      update(() => {
+        const needle = val.toLowerCase();
+        const listPosts = state.posts.map((v) => v);
+        optionsPost.value = listPosts.filter((option) => {
+          if (String(option.message).toLowerCase().indexOf(needle) > -1) {
+            return option;
+          }
+        });
+      });
     }
 
     return {
+      filterPost,
+      optionsPost,
       state,
-      sendQuestion,
-      sendResponse,
+      list,
+      createNewPost,
     };
   },
 });
