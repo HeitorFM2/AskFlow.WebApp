@@ -7,7 +7,7 @@ const headers = {
 }
 
 export function imgImgur(data) {
-  return axios.post("http://localhost:3000/v1/upload", data, { headers: headers })
+  return axios.post(`${process.env.VUE_APP_API}/v1/upload`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data.data;
