@@ -7,7 +7,7 @@ const headers = {
 }
 
 export function getUser() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/user/${LocalStorage.getItem("iduser")}`, { headers: headers })
+  return axios.get(`${process.env.VUE_APP_API}/v1/user/${LocalStorage.getItem("iduser")}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data;
@@ -23,7 +23,7 @@ export function getUser() {
 }
 
 export function getUserPost() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/posts/${LocalStorage.getItem("iduser")}`, { headers: headers })
+  return axios.get(`${process.env.VUE_APP_API}/v1/posts/${LocalStorage.getItem("iduser")}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data;
@@ -39,7 +39,7 @@ export function getUserPost() {
 }
 
 export function getPosts() {
-  return axios.get(`${process.env.APP_ROUTER}/v1/posts`, { headers: headers })
+  return axios.get(`${process.env.VUE_APP_API}/v1/posts`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data
@@ -55,7 +55,7 @@ export function getPosts() {
 }
 
 export function getDetailPost(idpost) {
-  return axios.get(`${process.env.APP_ROUTER}/v1/post/${idpost}`, { headers: headers })
+  return axios.get(`${process.env.VUE_APP_API}/v1/post/${idpost}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data.data[0]
@@ -71,7 +71,7 @@ export function getDetailPost(idpost) {
 }
 
 export function getResponsesPost(idpost) {
-  return axios.get(`${process.env.APP_ROUTER}/v1/responses/${idpost}`, { headers: headers })
+  return axios.get(`${process.env.VUE_APP_API}/v1/responses/${idpost}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         return response.data.data
@@ -87,7 +87,7 @@ export function getResponsesPost(idpost) {
 }
 
 export function createPost(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/post`, data, { headers: headers })
+  return axios.post(`${process.env.VUE_APP_API}/v1/post`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -104,7 +104,7 @@ export function createPost(data) {
 }
 
 export function createResponse(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/response`, data, { headers: headers })
+  return axios.post(`${process.env.VUE_APP_API}/v1/response`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -121,7 +121,7 @@ export function createResponse(data) {
 }
 
 export function emailEdit(data) {
-  return axios.put(`${process.env.APP_ROUTER}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
+  return axios.put(`${process.env.VUE_APP_API}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -137,7 +137,7 @@ export function emailEdit(data) {
 }
 
 export function imgEdit(data) {
-  return axios.put(`${process.env.APP_ROUTER}/v1/img/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
+  return axios.put(`${process.env.VUE_APP_API}/v1/img/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
@@ -153,7 +153,7 @@ export function imgEdit(data) {
 }
 
 export function deletePost(idpost) {
-  return axios.delete(`${process.env.APP_ROUTER}/v1/post/${idpost}`, { headers: headers })
+  return axios.delete(`${process.env.VUE_APP_API}/v1/post/${idpost}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Post successfully deleted");
@@ -169,7 +169,7 @@ export function deletePost(idpost) {
 }
 
 export function deleteResponse(idresponse) {
-  return axios.delete(`${process.env.APP_ROUTER}/v1/response/${idresponse}`, { headers: headers })
+  return axios.delete(`${process.env.VUE_APP_API}/v1/response/${idresponse}`, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Response successfully deleted");

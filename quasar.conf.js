@@ -43,7 +43,10 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: "hash", // available values: 'hash', 'history'
-      env: require('dotenv').config().parsed,
+      env: {
+        VUE_APP_API: process.env.API_URL,
+        TOKEN_IMGUR: process.env.IMGUR,
+      },
 
       // transpile: false,
       // publicPath: '/',

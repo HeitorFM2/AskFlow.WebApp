@@ -3,7 +3,7 @@ import { showNegativeNotify, showPositiveNotify } from "src/util/plugins";
 
 
 export function Login(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/login`, data)
+  return axios.post(`${process.env.VUE_APP_API}/v1/login`, data)
     .then((response) => {
       if (response.status == 200) {
         return response.data;
@@ -18,7 +18,7 @@ export function Login(data) {
 }
 
 export function Register(data) {
-  return axios.post(`${process.env.APP_ROUTER}/v1/user`, data)
+  return axios.post(`${process.env.VUE_APP_API}/v1/user`, data)
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Successfully registered!");
