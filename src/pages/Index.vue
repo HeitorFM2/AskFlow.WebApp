@@ -49,6 +49,7 @@
       <q-card
         class="q-pa-md q-mt-xl"
         style="width: 100%; background-color: #272525"
+        v-show="state.posts"
       >
         <q-intersection
           transition="scale"
@@ -65,7 +66,7 @@
             </q-item-section>
             <q-item-section class="text-caption q-mt-md">
               {{ q.first_name }} {{ q.last_name }}
-              <p>{{ formatDate(q.create_at) }}</p>
+              <p>{{ formatDate(q.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
           <q-card-section>
@@ -108,34 +109,6 @@
     </q-btn>
   </q-page>
 
-  <q-dialog v-model="state.onDialogHide">
-    <q-card class="bg-primary text-white dialog-response">
-      <q-card-section>
-        <div class="text-h6 text-center">Your answer</div>
-        <q-input
-          v-model="state.messageReponse"
-          borderless
-          color="white"
-          type="textarea"
-          placeholder="Make your answer.."
-          :input-style="{
-            resize: 'none',
-            height: '220px',
-            color: 'white',
-          }"
-        />
-      </q-card-section>
-      <q-card-actions align="right" class="q-pa-md">
-        <q-btn
-          label="Close"
-          color="secondary"
-          @click="state.onDialogHide = false"
-        />
-        <q-btn label="Confirm" color="secondary" @click="sendResponse()" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
   <q-dialog v-model="state.openDialogPost">
     <ViewQuestion
       :postDetail="state.postDetail"
@@ -154,9 +127,9 @@
             </q-avatar>
           </q-item-section>
 
-          <q-item-section class="text-subtitle1"
-            >{{ userData.first_name }} {{ userData.last_name }}</q-item-section
-          >
+          <q-item-section class="text-caption">
+            {{ userData.first_name }} {{ userData.last_name }}
+          </q-item-section>
         </q-item>
       </div>
 

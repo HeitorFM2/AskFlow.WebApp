@@ -1,6 +1,6 @@
 <template>
-  <div class="view-question q-my-xl q-pa-md bg-primary">
-    <div class="flex q-pa-md justify-end">
+  <div class="view-question q-pa-md bg-primary">
+    <div class="flex justify-end">
       <q-btn flat round color="white" icon="close" @click="closeDialog" />
     </div>
     <q-card class="q-pa-md" style="background-color: rgb(39, 36, 36)">
@@ -15,9 +15,9 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-caption">
-              {{ postDetail.first_name }}
-              {{ postDetail.last_name }}
+            <q-item-section class="text-caption q-mt-md">
+              {{ postDetail.first_name }} {{ postDetail.last_name }}
+              <p>{{ formatDate(postDetail.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
         </div>
@@ -29,6 +29,7 @@
           type="textarea"
           :input-style="{
             resize: 'none',
+            height: '80px',
             color: 'white',
           }"
         />
@@ -59,15 +60,7 @@
         class="q-pt-md"
       >
         <q-separator color="primary" style="width: 100%" />
-        <div class="flex justify-end">
-          <q-icon
-            v-if="userData.ID == q.iduser"
-            name="close"
-            color="white"
-            class="cursor-pointer"
-            @click="deleteResponsePost(q.id)"
-          />
-        </div>
+
         <div class="flex justify-between">
           <q-item class="text-white">
             <q-item-section avatar>
@@ -81,6 +74,13 @@
               <p>{{ formatDate(q.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
+          <q-icon
+            v-if="userData.ID == q.iduser"
+            name="close"
+            color="white"
+            class="cursor-pointer q-pt-md"
+            @click="deleteResponsePost(q.ID)"
+          />
         </div>
         <q-input
           v-model="q.message"
@@ -117,10 +117,9 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-subtitle1"
-              >{{ userData.first_name }}
-              {{ userData.last_name }}</q-item-section
-            >
+            <q-item-section class="text-caption">
+              {{ userData.first_name }} {{ userData.last_name }}
+            </q-item-section>
           </q-item>
         </div>
         <q-input
@@ -144,7 +143,7 @@
         <q-btn
           label="Confirmar"
           color="secondary"
-          @click="sendResponse(state.responseBody, userData.ID, postDetail.id)"
+          @click="sendResponse(state.responseBody, userData.ID, postDetail.ID)"
         />
       </q-card-actions>
     </q-card>
@@ -189,7 +188,7 @@ export default defineComponent({
     async function listResponsesPost() {
       showLoading("Loading...");
       state.responsePost = [];
-      state.responsePost = await getResponsesPost(props.postDetail.id);
+      state.responsePost = await getResponsesPost(props.postDetail.ID);
       hideLoading();
     }
 
