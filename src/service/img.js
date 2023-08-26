@@ -11,11 +11,10 @@ export function imgImgur(data) {
     .then((response) => {
       if (response.status == 200) {
         return response.data
-      } else {
-        showNegativeNotify("Error uploading image");
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Error uploading image!");
     });
 }

@@ -93,13 +93,11 @@ export function createPost(data) {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
         return response.data
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -110,13 +108,11 @@ export function createResponse(data) {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
         return response.data
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -126,13 +122,11 @@ export function emailEdit(data) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -142,13 +136,11 @@ export function usernameEdit(data) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -158,13 +150,11 @@ export function imgEdit(data) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -174,13 +164,11 @@ export function deletePost(idpost) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Post successfully deleted");
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }
@@ -190,13 +178,11 @@ export function deleteResponse(idresponse) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Response successfully deleted");
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
+      showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;
     });
 }

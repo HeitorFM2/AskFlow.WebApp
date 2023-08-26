@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="column flex-center q-pa-md">
+    <div class="column flex-center q-pa-sm">
       <q-select
         standout
         dense
@@ -31,10 +31,9 @@
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
             <q-item-section>
-              <q-item-label caption class="text-white"
-                >{{ scope.opt.first_name }}
-                {{ scope.opt.last_name }}</q-item-label
-              >
+              <q-item-label caption class="text-white">
+                {{ scope.opt.first_name }} {{ scope.opt.last_name }}
+              </q-item-label>
               <q-item-label class="text-white">
                 {{ scope.opt.message }}
               </q-item-label>
@@ -43,54 +42,59 @@
         </template>
       </q-select>
 
-      <div class="questions q-mt-xl q-pa-lg">
-        <p class="text-center text-h5 text-weight-medium">Feed</p>
+      <p class="text-center text-h5 text-weight-medium q-mt-lg text-white">
+        Home page
+      </p>
+
+      <q-card
+        class="q-pa-md q-mt-xl"
+        style="width: 100%; background-color: #272525"
+      >
         <q-intersection
           transition="scale"
+          class="card-questions"
+          @click="(state.postDetail = q), (state.openDialogPost = true)"
           v-for="(q, index) in state.posts"
           :key="index"
         >
-          <q-card
-            class="q-ma-lg card-questions"
-            @click="(state.postDetail = q), (state.openDialogPost = true)"
-          >
-            <q-item class="q-pt-md">
-              <q-item-section avatar>
-                <q-avatar>
-                  <q-img :src="q.img" :ratio="1" />
-                </q-avatar>
-              </q-item-section>
-              <q-item-section
-                >{{ q.first_name }} {{ q.last_name }}</q-item-section
-              >
-            </q-item>
-            <q-card-section>
-              <q-input
-                v-model="q.message"
-                borderless
-                :readonly="true"
-                color="white"
-                type="textarea"
-                :input-style="{
-                  resize: 'none',
-                  height: q.message.length < 100 ? '50px' : '100px',
-                  color: 'white',
-                }"
-              />
-              <q-img
-                v-show="q.imgpost"
-                :src="q.imgpost"
-                style="max-width: 400px"
-                :ratio="1"
-              />
-              <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
-            </q-card-section>
-            <q-tooltip class="bg-primary" :offset="[10, 10]">
-              Click to see the answers to this post
-            </q-tooltip>
-          </q-card>
+          <q-item class="q-pt-md">
+            <q-item-section avatar>
+              <q-avatar>
+                <q-img :src="q.img" :ratio="1" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section class="text-caption q-mt-md">
+              {{ q.first_name }} {{ q.last_name }}
+              <p>{{ formatDate(q.create_at) }}</p>
+            </q-item-section>
+          </q-item>
+          <q-card-section>
+            <q-input
+              v-model="q.message"
+              borderless
+              :readonly="true"
+              color="white"
+              type="textarea"
+              :input-style="{
+                resize: 'none',
+                height: q.message.length < 100 ? '50px' : '100px',
+                color: 'white',
+              }"
+            />
+            <q-img
+              v-show="q.imgpost"
+              :src="q.imgpost"
+              style="max-width: 400px"
+              :ratio="1"
+            />
+            <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
+          </q-card-section>
+          <q-tooltip class="bg-primary" :offset="[10, 10]">
+            Click to see the answers to this post
+          </q-tooltip>
+          <q-separator color="primary" />
         </q-intersection>
-      </div>
+      </q-card>
     </div>
     <q-btn
       class="fixed-btn"
@@ -198,6 +202,7 @@ import { imgImgur } from "../service/img";
 import { LocalStorage } from "quasar";
 import ViewQuestion from "src/components/ViewQuestion.vue";
 import { hideLoading, showLoading, showNegativeNotify } from "src/util/plugins";
+import { formatDate } from "src/util/date";
 
 export default defineComponent({
   name: "PageIndex",
@@ -309,6 +314,7 @@ export default defineComponent({
       state,
       list,
       createNewPost,
+      formatDate,
     };
   },
 });
