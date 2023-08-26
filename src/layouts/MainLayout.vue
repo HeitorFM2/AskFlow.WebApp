@@ -343,7 +343,7 @@ export default defineComponent({
 
         await imgEdit(formdata);
 
-        list();
+        listUser();
       } catch (error) {
         console.warn(error);
       } finally {
