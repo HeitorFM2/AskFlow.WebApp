@@ -58,7 +58,7 @@ body {
   width: 100% !important;
   max-width: 60% !important;
   width: 30%;
-  min-width: 300px;
+  min-width: 320px;
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
   height: 80%;
 }
@@ -93,9 +93,8 @@ body {
 
 .card-questions {
   color: white;
-  border-radius: 10px;
   cursor: pointer;
-  background-color: rgba(39, 36, 36, 0.7);
+  width: 100%;
 
   &:hover {
     background-color: rgba(39, 36, 36, 1) !important;
