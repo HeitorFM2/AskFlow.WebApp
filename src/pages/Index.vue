@@ -256,24 +256,22 @@ export default defineComponent({
       }
       showLoading("Loading...");
       try {
-        let formdata = "";
-        let linkImg;
+        let linkImg = "";
 
-        if (state.fileName != []) {
-          formdata = new FormData();
+        if (state.fileName.name) {
+          let formdata = new FormData();
           formdata.append("image", state.fileName);
           await imgImgur(formdata).then((result) => {
             linkImg = result;
           });
         }
-
         let data = {
           iduser: parseInt(LocalStorage.getItem("iduser")),
           message: state.messageBody,
           imgpost: linkImg,
         };
 
-        await createPost(data, formdata);
+        await createPost(data);
         list();
         ctx.emit("reloadList");
       } catch (error) {
