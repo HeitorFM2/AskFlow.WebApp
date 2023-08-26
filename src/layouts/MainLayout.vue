@@ -20,14 +20,22 @@
             AskFlow
             <q-tooltip class="bg-secondary" :offset="[10, 10]">
               2023© Heitor Melegate V1.0
-            </q-tooltip></q-item
-          >
+            </q-tooltip>
+          </q-item>
+
           <q-separator />
           <q-item
-            class="flex flex-right text-caption q-pt-md"
+            class="flex justify-between text-caption q-pt-md items-center text-center"
             style="color: white"
           >
             Your questions
+            <q-btn
+              flat
+              class="lt-md"
+              color="white"
+              icon="close"
+              @click="state.showQuestions = false"
+            />
           </q-item>
           <div>
             <MenuBar
@@ -51,6 +59,13 @@
       class="bg-primary"
     >
       <q-scroll-area class="fit">
+        <q-btn
+          flat
+          class="lt-md q-pa-md"
+          color="white"
+          icon="close"
+          @click="state.showPerfil = false"
+        />
         <div class="q-pt-xl flex flex-center">
           <div class="flex items-end">
             <q-img
@@ -73,8 +88,14 @@
               @change="fileUpload"
             />
           </div>
-          <p class="q-pa-md text-h5 text-white">
+          <p
+            class="q-pa-md text-h5 text-white cursor-pointer"
+            @click="state.editUsername = true"
+          >
             {{ state.userData.first_name }} {{ state.userData.last_name }}
+            <q-tooltip class="bg-secondary" :offset="[10, 10]">
+              Click to edit username!
+            </q-tooltip>
           </p>
           <q-item class="q-pb-md text-white" style="width: 80%">
             <div
@@ -109,7 +130,7 @@
   </q-layout>
 
   <q-dialog v-model="state.onDialogHide">
-    <q-card class="bg-primary text-white" style="width: 20%">
+    <q-card class="bg-primary text-white" style="width: 20%; min-width: 200px">
       <q-card-section>
         Are you sure you want to log out?
         <q-icon name="sentiment_very_dissatisfied"
@@ -126,7 +147,7 @@
   </q-dialog>
 
   <q-dialog v-model="state.openDialogEdit">
-    <q-card class="bg-primary text-white" style="width: 50%">
+    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
       <q-card-section>
         <q-input
           standout="bg-primary"
@@ -161,13 +182,56 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="state.editUsername">
+    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
+      <q-card-section>
+        <q-input
+          standout="bg-primary"
+          v-model="state.firstName"
+          placeholder="First name"
+          color="white"
+          :input-style="{ color: 'white' }"
+          class="q-ma-md"
+          bg-color="secondary"
+        />
+        <q-input
+          standout="bg-primary"
+          v-model="state.lastName"
+          placeholder="Last name"
+          color="white"
+          :input-style="{ color: 'white' }"
+          class="q-ma-md text-white"
+          bg-color="secondary"
+        />
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          label="Fechar"
+          color="secondary"
+          @click="state.editUsername = false"
+        />
+        <q-btn
+          label="Confirmar"
+          color="secondary"
+          @click="editUsername(state.firstName, state.lastName)"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
 import MenuBar from "components/MenuBar.vue";
 import Index from "src/pages/Index.vue";
 import { onBeforeMount } from "vue";
-import { getUserPost, getUser, emailEdit, imgEdit } from "../service/post";
+import {
+  getUserPost,
+  getUser,
+  emailEdit,
+  imgEdit,
+  usernameEdit,
+} from "../service/post";
 import { imgImgur } from "../service/img";
 import { defineComponent, ref, reactive } from "vue";
 import { hideLoading, showLoading } from "src/util/plugins";
@@ -195,18 +259,31 @@ export default defineComponent({
       showQuestions: ref(false),
       showPerfil: ref(false),
       openDialogEdit: ref(false),
+      editUsername: ref(false),
       errorBody: ref(false),
       newEmail: ref(""),
       messageBody: ref(""),
       urlImg: ref(""),
+      firstName: ref(""),
+      lastName: ref(""),
     });
     const router = useRouter();
+
     onBeforeMount(async () => {
       list();
+      listUser();
     });
 
     function openFilePicker() {
       document.getElementById("fileInput").click();
+    }
+
+    async function listUser() {
+      let response = await getUser();
+      state.userData = response.data;
+
+      state.firstName = state.userData.first_name;
+      state.lastName = state.userData.last_name;
     }
 
     async function list() {
@@ -214,9 +291,6 @@ export default defineComponent({
       try {
         let response = await getUserPost();
         state.myPosts = response.data;
-
-        response = await getUser();
-        state.userData = response.data;
       } catch (error) {
         console.warn(error);
       } finally {
@@ -234,7 +308,20 @@ export default defineComponent({
       showLoading("Loading...");
       try {
         await emailEdit({ email: newEmail });
-        list();
+        listUser();
+      } catch (error) {
+        console.warn(error);
+      } finally {
+        state.openDialogEdit = false;
+        hideLoading();
+      }
+    }
+
+    async function editUsername(firstName, lastName) {
+      showLoading("Loading...");
+      try {
+        await usernameEdit({ first_name: firstName, last_name: lastName });
+        listUser();
       } catch (error) {
         console.warn(error);
       } finally {
@@ -253,11 +340,8 @@ export default defineComponent({
         }
         const formdata = new FormData();
         formdata.append("image", selectedFile);
-        await imgImgur(formdata).then((response) => {
-          state.urlImg = response.link;
-        });
 
-        await imgEdit({ img: state.urlImg });
+        await imgEdit(formdata);
 
         list();
       } catch (error) {
@@ -272,6 +356,7 @@ export default defineComponent({
       logout,
       list,
       editEmail,
+      editUsername,
       openFilePicker,
       fileUpload,
     };

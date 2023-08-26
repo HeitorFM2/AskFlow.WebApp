@@ -62,7 +62,7 @@ export default defineComponent({
     async function listResponsesPost() {
       showLoading("Carregando...");
       state.responsePost = [];
-      state.responsePost = await getResponsesPost(props.postDetail.ID);
+      state.responsePost = await getResponsesPost(props.postDetail.id);
       hideLoading();
     }
 

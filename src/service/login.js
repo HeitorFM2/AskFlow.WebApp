@@ -24,11 +24,9 @@ export function Register(data) {
         showPositiveNotify("Successfully registered!");
       } else {
         showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Erro durante o login:', error);
-      throw error;
     });
 }
