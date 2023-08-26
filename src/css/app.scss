@@ -31,6 +31,7 @@ body {
   background-color: #272424;
   width: 100%;
   max-width: 100%;
+  min-width: 200px;
   box-shadow: rgba(39, 36, 36) 0px 5px 10px;
   height: 54px;
   cursor: pointer;
@@ -54,9 +55,19 @@ body {
 }
 
 .view-question {
-  border-radius: 10px !important;
   width: 100% !important;
   max-width: 60% !important;
+  width: 30%;
+  min-width: 300px;
+  box-shadow: rgba(39, 36, 36) 0px 5px 5px;
+  height: 80%;
+}
+
+.view-answers {
+  width: 100% !important;
+  max-width: 60% !important;
+  width: 30%;
+  min-width: 200px;
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
   height: 80%;
 }
@@ -65,8 +76,9 @@ body {
   border-radius: 10px !important;
   width: 100% !important;
   max-width: 40% !important;
+  min-width: 300px;
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
-  height: 43%;
+  height: 32%;
 }
 
 .questions {
@@ -94,6 +106,7 @@ body {
   background-color: rgba(39, 36, 36, 0.7);
   box-shadow: rgba(39, 36, 36) 5px 10px 10px;
   width: 30%;
+  min-width: 300px;
   height: 600px;
   border-radius: 30px;
 

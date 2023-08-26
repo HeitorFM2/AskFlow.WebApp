@@ -44,15 +44,17 @@
       </q-select>
 
       <div class="questions q-mt-xl q-pa-lg">
-        <p class="text-center text-h5 text-weight-medium q-pd-md">Feed</p>
-        <q-card
-          class="q-ma-lg card-questions"
+        <p class="text-center text-h5 text-weight-medium">Feed</p>
+        <q-intersection
+          transition="scale"
           v-for="(q, index) in state.posts"
           :key="index"
-          @click="(state.postDetail = q), (state.openDialogPost = true)"
         >
-          <q-card-section>
-            <q-item>
+          <q-card
+            class="q-ma-lg card-questions"
+            @click="(state.postDetail = q), (state.openDialogPost = true)"
+          >
+            <q-item class="q-pt-md">
               <q-item-section avatar>
                 <q-avatar>
                   <q-img :src="q.img" :ratio="1" />
@@ -62,15 +64,32 @@
                 >{{ q.first_name }} {{ q.last_name }}</q-item-section
               >
             </q-item>
-          </q-card-section>
-          <q-card-section>
-            {{ q.message }}
-            <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
-          </q-card-section>
-          <q-tooltip class="bg-primary" :offset="[10, 10]">
-            Click to see the answers to this post
-          </q-tooltip>
-        </q-card>
+            <q-card-section>
+              <q-input
+                v-model="q.message"
+                borderless
+                :readonly="true"
+                color="white"
+                type="textarea"
+                :input-style="{
+                  resize: 'none',
+                  height: q.message.length < 100 ? '50px' : '100px',
+                  color: 'white',
+                }"
+              />
+              <q-img
+                v-show="q.imgpost"
+                :src="q.imgpost"
+                style="max-width: 400px"
+                :ratio="1"
+              />
+              <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
+            </q-card-section>
+            <q-tooltip class="bg-primary" :offset="[10, 10]">
+              Click to see the answers to this post
+            </q-tooltip>
+          </q-card>
+        </q-intersection>
       </div>
     </div>
     <q-btn
@@ -121,7 +140,7 @@
     />
   </q-dialog>
 
-  <q-dialog v-model="state.openNewPost">
+  <q-dialog v-model="state.openNewPost" @hide="state.fileName = []">
     <q-card class="send-question bg-secondary q-ma-md q-pa-md">
       <div class="flex justify-between">
         <q-item class="text-white">
@@ -142,15 +161,30 @@
         borderless
         color="white"
         type="textarea"
+        maxlength="300"
         placeholder="Ask your question..."
         :input-style="{
           resize: 'none',
-          height: '220px',
           color: 'white',
         }"
       />
       <p class="text-red text-center" v-if="state.errorBody">Empty message!</p>
       <q-card-actions align="right">
+        <q-file
+          v-model="state.fileName"
+          borderless
+          clearable
+          ref="file"
+          color="white"
+          :input-style="{ color: 'white' }"
+          style="max-width: 400px"
+          dense
+        />
+        <q-btn flat color="accent" round icon="attachment" @click="tclick">
+          <q-tooltip class="bg-primary" :offset="[10, 10]">
+            Click to add a image
+          </q-tooltip>
+        </q-btn>
         <q-btn push color="accent" round icon="send" @click="createNewPost()" />
       </q-card-actions>
     </q-card>
@@ -160,6 +194,7 @@
 <script>
 import { defineComponent, reactive, ref, onBeforeMount } from "vue";
 import { getPosts, createPost } from "../service/post";
+import { imgImgur } from "../service/img";
 import { LocalStorage } from "quasar";
 import ViewQuestion from "src/components/ViewQuestion.vue";
 import { hideLoading, showLoading, showNegativeNotify } from "src/util/plugins";
@@ -178,6 +213,12 @@ export default defineComponent({
 
   emits: ["reloadList"],
 
+  methods: {
+    tclick() {
+      this.$refs.file.pickFiles();
+    },
+  },
+
   setup(props, ctx) {
     const state = reactive({
       posts: ref([]),
@@ -185,6 +226,7 @@ export default defineComponent({
       search: ref(""),
       messageBody: ref(""),
       messageReponse: ref(""),
+      fileName: ref([]),
       openNewPost: ref(false),
       onDialogHide: ref(false),
       openDialogPost: ref(false),
@@ -214,9 +256,19 @@ export default defineComponent({
       }
       showLoading("Loading...");
       try {
+        let linkImg = "";
+
+        if (state.fileName.name) {
+          let formdata = new FormData();
+          formdata.append("image", state.fileName);
+          await imgImgur(formdata).then((result) => {
+            linkImg = result;
+          });
+        }
         let data = {
           iduser: parseInt(LocalStorage.getItem("iduser")),
           message: state.messageBody,
+          imgpost: linkImg,
         };
 
         await createPost(data);
@@ -251,7 +303,6 @@ export default defineComponent({
         });
       });
     }
-
     return {
       filterPost,
       optionsPost,

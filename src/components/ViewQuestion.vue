@@ -6,19 +6,19 @@
     <q-card class="q-ma-md q-pa-md" style="background-color: rgb(39, 36, 36)">
       <p class="text-center text-h5 text-weight-medium text-white">Post</p>
       <q-separator />
-      <div class="q-pa-md">
+      <div>
         <div class="flex justify-between">
           <q-item class="text-white">
             <q-item-section avatar>
               <q-avatar>
-                <q-img src="../assets/imgs/img.jpg" :ratio="1" />
+                <q-img :src="postDetail.img" :ratio="1" />
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-subtitle1"
-              >{{ postDetail.first_name }}
-              {{ postDetail.last_name }}</q-item-section
-            >
+            <q-item-section class="text-subtitle1">
+              {{ postDetail.first_name }}
+              {{ postDetail.last_name }}
+            </q-item-section>
           </q-item>
         </div>
         <q-input
@@ -27,13 +27,12 @@
           :readonly="true"
           color="white"
           type="textarea"
-          placeholder="Ask your question..."
           :input-style="{
             resize: 'none',
-            height: '140px',
             color: 'white',
           }"
         />
+        <q-img v-show="postDetail.imgpost" :src="postDetail.imgpost" />
       </div>
 
       <q-separator />
@@ -57,12 +56,21 @@
     >
       <p class="text-center text-h5 text-weight-medium text-white">Answers</p>
       <q-separator />
-      <q-card
-        class="bg-primary q-pa-md q-ma-lg"
-        style="box-shadow: rgba(39, 36, 36) 5px 10px 10px; border-radius: 10px"
+      <q-intersection
+        transition="jump-down"
         v-for="(q, index) in state.responsePost"
         :key="index"
+        class="q-pt-md"
       >
+        <div class="flex justify-end">
+          <q-icon
+            v-if="userData.ID == q.iduser"
+            name="close"
+            color="white"
+            class="cursor-pointer"
+            @click="deleteResponsePost(q.id)"
+          />
+        </div>
         <div class="flex justify-between">
           <q-item class="text-white">
             <q-item-section avatar>
@@ -71,31 +79,27 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-subtitle1"
-              >{{ q.first_name }} {{ q.last_name }}</q-item-section
-            >
+            <q-item-section class="text-caption q-pt-md">
+              {{ q.first_name }} {{ q.last_name }}
+              <p>{{ formatDate(q.CreatedAt) }}</p>
+            </q-item-section>
           </q-item>
-          <q-icon
-            v-if="userData.ID == postDetail.iduser"
-            name="close"
-            color="white"
-            class="cursor-pointer"
-            @click="deleteResponsePost(state.responsePost.ID)"
-          />
         </div>
         <q-input
           v-model="q.message"
           borderless
           color="white"
+          class="q-mb-md"
           :readonly="true"
           type="textarea"
           :input-style="{
             resize: 'none',
-            height: '120px',
+            height: '80px',
             color: 'white',
           }"
         />
-      </q-card>
+        <q-separator color="primary" style="width: 100%" />
+      </q-intersection>
     </q-card>
   </div>
 
@@ -128,9 +132,9 @@
           borderless
           color="white"
           type="textarea"
+          maxlength="300"
           :input-style="{
             resize: 'none',
-            height: '285px',
             color: 'white',
           }"
         />
@@ -144,7 +148,7 @@
         <q-btn
           label="Confirmar"
           color="secondary"
-          @click="sendResponse(state.responseBody, userData.ID, postDetail.ID)"
+          @click="sendResponse(state.responseBody, userData.ID, postDetail.id)"
         />
       </q-card-actions>
     </q-card>
@@ -159,6 +163,7 @@ import {
   deleteResponse,
 } from "../service/post";
 import { showLoading, hideLoading } from "src/util/plugins";
+import { formatDate } from "src/util/date";
 
 export default defineComponent({
   name: "ViewQuestion",
@@ -188,7 +193,7 @@ export default defineComponent({
     async function listResponsesPost() {
       showLoading("Loading...");
       state.responsePost = [];
-      state.responsePost = await getResponsesPost(props.postDetail.ID);
+      state.responsePost = await getResponsesPost(props.postDetail.id);
       hideLoading();
     }
 
@@ -202,6 +207,7 @@ export default defineComponent({
       try {
         await createResponse(data);
         listResponsesPost();
+        ctx.emit("reloadListIndex");
       } catch (error) {
         console.warn(error);
       } finally {
@@ -212,9 +218,9 @@ export default defineComponent({
 
     async function deleteResponsePost(idresponse) {
       showLoading("Loading...");
-      console.log(state.responsePost);
       try {
         await deleteResponse(idresponse);
+        listResponsesPost();
       } catch (error) {
         console.warn(error);
       } finally {
@@ -230,6 +236,7 @@ export default defineComponent({
       deleteResponsePost,
       sendResponse,
       closeDialog,
+      formatDate,
     };
   },
 });

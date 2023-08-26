@@ -9,15 +9,13 @@ const headers = {
 export function imgImgur(data) {
   return axios.post(`${process.env.VUE_APP_API}/v1/upload`, data, { headers: headers })
     .then((response) => {
-      if (response.data.success) {
-        return response.data.data;
+      if (response.status == 200) {
+        return response.data
       } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
+        showNegativeNotify("Error uploading image");
       }
     })
     .catch((error) => {
       console.error('Error during API query:', error);
-      throw error;
     });
 }

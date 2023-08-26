@@ -149,7 +149,8 @@ export default defineComponent({
             return;
           }
           await Register(data);
-
+          state.pass = "";
+          state.email = "";
           state.pageLogin = true;
         }
       } catch (error) {

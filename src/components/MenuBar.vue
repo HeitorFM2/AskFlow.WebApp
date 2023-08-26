@@ -1,13 +1,22 @@
 <template>
   <div>
     <q-item class="q-pb-sm">
-      <div class="questions-menu flex flex-center">
+      <div class="flex flex-center questions-menu">
         <q-item-section avatar class="q-pa-md">
           <q-icon color="white" name="chat_bubble_outline" />
         </q-item-section>
 
         <q-item-section style="color: white" @click="viewPost(op.ID)">
-          {{ op.message }}
+          <q-input
+            v-model="state.message.op.message"
+            borderless
+            :readonly="true"
+            color="white"
+            :input-style="{
+              resize: 'none',
+              color: 'white',
+            }"
+          />
         </q-item-section>
         <q-btn
           flat
@@ -48,13 +57,17 @@ export default defineComponent({
       type: Object,
     },
   },
+
   emits: ["reloadList"],
 
   setup(props, ctx) {
     const state = reactive({
+      message: ref(""),
       postDetail: ref([]),
       openDialogPost: ref(false),
     });
+
+    state.message = props;
 
     async function viewPost(idpost) {
       showLoading("Loading...");

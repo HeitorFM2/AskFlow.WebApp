@@ -87,6 +87,7 @@ export function getResponsesPost(idpost) {
 }
 
 export function createPost(data) {
+
   return axios.post(`${process.env.VUE_APP_API}/v1/post`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
@@ -122,6 +123,22 @@ export function createResponse(data) {
 
 export function emailEdit(data) {
   return axios.put(`${process.env.VUE_APP_API}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
+    .then((response) => {
+      if (response.data.success) {
+        showPositiveNotify(response.data.message);
+      } else {
+        showNegativeNotify(response.data.message);
+        throw new Error(response.data.message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error during API query:', error);
+      throw error;
+    });
+}
+
+export function usernameEdit(data) {
+  return axios.put(`${process.env.VUE_APP_API}/v1/username/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify(response.data.message);
