@@ -18,12 +18,13 @@ export function Login(data) {
 export function Register(data) {
   return axios.post(`${process.env.VUE_APP_API}/v1/user`, data)
     .then((response) => {
-      if (response.data.success) {
+      if (response.status == 200) {
         showPositiveNotify("Successfully registered!");
+        return response.data
       }
     })
     .catch((error) => {
       console.error('Erro durante o login:', error);
-      showNegativeNotify("Sorry, there was an error - try again later!");
+      showNegativeNotify(error.response.data.message);
     });
 }

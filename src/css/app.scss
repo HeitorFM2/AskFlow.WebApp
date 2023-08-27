@@ -60,7 +60,6 @@ body {
   width: 30%;
   min-width: 320px;
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
-  height: 80%;
 }
 
 .view-answers {
@@ -83,7 +82,7 @@ body {
 
 .questions {
   border-radius: 10px;
-  width: 100%;
+
   box-shadow: rgba(39, 36, 36) 0px 10px 30px;
 
   p {
@@ -95,6 +94,9 @@ body {
   color: white;
   cursor: pointer;
   width: 100%;
+  max-width: 100%;
+  min-width: 300px;
+  background-color: rgba(39, 36, 36, 0.7);
 
   &:hover {
     background-color: rgba(39, 36, 36, 1) !important;

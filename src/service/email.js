@@ -16,8 +16,11 @@ export function emailSend(data) {
       }
     })
     .catch((error) => {
+      if (error.response.status == 401) {
+        logout()
+      }
       console.error('Error during API query:', error);
-      showNegativeNotify("Error uploading image!");
+      showNegativeNotify("Error sending image!");
     });
 }
 
@@ -25,10 +28,13 @@ export function emailEdit(data) {
   return axios.put(`${process.env.VUE_APP_API}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {
       if (response.data.success) {
-        showPositiveNotify(response.data.message);
+        showPositiveNotify("Email edited successfully!");
       }
     })
     .catch((error) => {
+      if (error.response.status == 401) {
+        logout()
+      }
       console.error('Error during API query:', error);
       showNegativeNotify("Sorry, there was an error - try again later!");
       throw error;

@@ -1,5 +1,8 @@
 <template>
-  <div class="view-question q-pa-md bg-primary">
+  <div
+    class="view-question q-pa-md bg-primary"
+    :style="['height', state.responsePost ? '80%' : '40%']"
+  >
     <div class="flex justify-end">
       <q-btn flat round color="white" icon="close" @click="closeDialog" />
     </div>
@@ -22,6 +25,7 @@
           </q-item>
         </div>
         <q-input
+          v-show="postDetail.message"
           v-model="state.messageBody"
           borderless
           :readonly="true"
@@ -59,8 +63,15 @@
         :key="index"
         class="q-pt-md"
       >
-        <q-separator color="primary" style="width: 100%" />
-
+        <div class="flex justify-end">
+          <q-icon
+            v-if="userData.ID == q.iduser"
+            name="close"
+            color="white"
+            class="cursor-pointer"
+            @click="deleteResponsePost(q.ID)"
+          />
+        </div>
         <div class="flex justify-between">
           <q-item class="text-white">
             <q-item-section avatar>
@@ -202,7 +213,7 @@ export default defineComponent({
       try {
         await createResponse(data);
         listResponsesPost();
-        ctx.emit("reloadListIndex");
+        state.responseBody = "";
       } catch (error) {
         console.warn(error);
       } finally {

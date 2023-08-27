@@ -83,7 +83,7 @@
                 @click="state.onDialogHide = true"
               >
                 <q-item-section>
-                  <q-item-label> Logout </q-item-label>
+                  <q-item-label class="text-red"> Logout </q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -186,6 +186,7 @@
           standout="bg-primary"
           v-model="state.newEmail"
           placeholder="New email"
+          maxlength="120"
           color="white"
           :input-style="{ color: 'white' }"
           class="q-ma-md text-white"
@@ -214,6 +215,7 @@
           standout="bg-primary"
           v-model="state.firstName"
           placeholder="First name"
+          maxlength="120"
           color="white"
           :input-style="{ color: 'white' }"
           class="q-ma-md"
@@ -223,6 +225,7 @@
           standout="bg-primary"
           v-model="state.lastName"
           placeholder="Last name"
+          maxlength="120"
           color="white"
           :input-style="{ color: 'white' }"
           class="q-ma-md text-white"
@@ -254,6 +257,7 @@
             v-model="state.nameEmail"
             placeholder="Name"
             color="white"
+            maxlength="120"
             :input-style="{ color: 'white' }"
             class="q-ma-md"
             bg-color="secondary"
@@ -263,6 +267,7 @@
             v-model="state.email"
             placeholder="Email"
             color="white"
+            maxlength="120"
             :input-style="{ color: 'white' }"
             class="q-ma-md text-white"
             bg-color="secondary"
@@ -272,7 +277,7 @@
             v-model="state.messageEmail"
             class="q-ma-md"
             type="textarea"
-            maxlength="300"
+            maxlength="600"
             bg-color="secondary"
             placeholder="Your message"
             :input-style="{
@@ -280,7 +285,7 @@
               color: 'white',
             }"
           />
-          <p v-show="state.alert" class="text-red text-center">
+          <p v-show="state.errorBody" class="text-red text-center">
             Preencha todos os campos!
           </p>
         </q-card-section>
@@ -300,16 +305,15 @@
 <script>
 import { defineComponent, ref, reactive, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
-import { LocalStorage } from "quasar";
 
 import MenuBar from "components/MenuBar.vue";
 import Index from "src/pages/Index.vue";
-
 import { getUserPost, getUser, imgEdit, usernameEdit } from "../service/post";
-
 import { emailSend, emailEdit } from "../service/email";
-
 import { hideLoading, showLoading } from "src/util/plugins";
+import { logout } from "src/util/auth";
+
+import { LocalStorage } from "quasar";
 
 export default defineComponent({
   name: "MainLayout",
@@ -337,7 +341,6 @@ export default defineComponent({
       nameEmail: ref(""),
       messageBody: ref(""),
       messageEmail: ref(""),
-      aler: ref(false),
 
       urlImg: ref(""),
 
@@ -377,6 +380,11 @@ export default defineComponent({
       showLoading("Loading...");
       try {
         let response = await getUserPost();
+        response.data.forEach((item) => {
+          if (item.message === "") {
+            item.message = "Image";
+          }
+        });
         state.myPosts = response.data;
       } catch (error) {
         console.warn(error);
@@ -385,17 +393,34 @@ export default defineComponent({
       }
     }
 
-    async function logout() {
-      router.push("/");
-      LocalStorage.remove("iduser");
-      LocalStorage.remove("token");
-    }
-
     async function editEmail(newEmail) {
       showLoading("Loading...");
       try {
         await emailEdit({ email: newEmail });
         listUser();
+      } catch (error) {
+        console.warn(error);
+      } finally {
+        state.openDialogEdit = false;
+        hideLoading();
+      }
+    }
+
+    async function sendEmail() {
+      try {
+        const { email, nameEmail, messageEmail } = state;
+
+        if (!email || !nameEmail || !messageEmail) {
+          state.errorBody = true;
+          return;
+        }
+        showLoading("Loading...");
+        let data = {
+          email: email,
+          name: nameEmail,
+          message: messageEmail,
+        };
+        await emailSend(data);
       } catch (error) {
         console.warn(error);
       } finally {

@@ -45,57 +45,50 @@
       <p class="text-center text-h5 text-weight-medium q-mt-lg text-white">
         Home page
       </p>
-
-      <q-card
-        class="q-pa-md q-mt-xl"
-        style="width: 100%; background-color: #272525"
-        v-show="state.posts"
+      <q-intersection
+        class="card-questions"
+        @click="(state.postDetail = q), (state.openDialogPost = true)"
+        v-for="(q, index) in state.posts"
+        :key="index"
       >
-        <q-intersection
-          transition="scale"
-          class="card-questions"
-          @click="(state.postDetail = q), (state.openDialogPost = true)"
-          v-for="(q, index) in state.posts"
-          :key="index"
-        >
-          <q-item class="q-pt-md">
-            <q-item-section avatar>
-              <q-avatar>
-                <q-img :src="q.img" :ratio="1" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section class="text-caption q-mt-md">
-              {{ q.first_name }} {{ q.last_name }}
-              <p>{{ formatDate(q.CreatedAt) }}</p>
-            </q-item-section>
-          </q-item>
-          <q-card-section>
-            <q-input
-              v-model="q.message"
-              borderless
-              :readonly="true"
-              color="white"
-              type="textarea"
-              :input-style="{
-                resize: 'none',
-                height: q.message.length < 100 ? '50px' : '100px',
-                color: 'white',
-              }"
-            />
-            <q-img
-              v-show="q.imgpost"
-              :src="q.imgpost"
-              style="max-width: 400px"
-              :ratio="1"
-            />
-            <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
-          </q-card-section>
-          <q-tooltip class="bg-primary" :offset="[10, 10]">
-            Click to see the answers to this post
-          </q-tooltip>
-          <q-separator color="primary" />
-        </q-intersection>
-      </q-card>
+        <q-item class="q-pt-md">
+          <q-item-section avatar>
+            <q-avatar>
+              <q-img :src="q.img" :ratio="1" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section class="text-caption q-mt-md">
+            {{ q.first_name }} {{ q.last_name }}
+            <p>{{ formatDate(q.CreatedAt) }}</p>
+          </q-item-section>
+        </q-item>
+        <q-card-section>
+          <q-input
+            v-show="q.message"
+            v-model="q.message"
+            borderless
+            :readonly="true"
+            color="white"
+            type="textarea"
+            :input-style="{
+              resize: 'none',
+              height: q.message.length < 100 ? '50px' : '100px',
+              color: 'white',
+            }"
+          />
+          <q-img
+            v-show="q.imgpost"
+            :src="q.imgpost"
+            style="max-width: 400px"
+            :ratio="1"
+          />
+          <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
+        </q-card-section>
+        <q-tooltip class="bg-primary" :offset="[10, 10]">
+          Click to see the answers to this post
+        </q-tooltip>
+        <q-separator color="primary" />
+      </q-intersection>
     </div>
     <q-btn
       class="fixed-btn"
@@ -117,7 +110,10 @@
     />
   </q-dialog>
 
-  <q-dialog v-model="state.openNewPost" @hide="state.fileName = []">
+  <q-dialog
+    v-model="state.openNewPost"
+    @hide="(state.fileName = []), (state.messageBody = '')"
+  >
     <q-card class="send-question bg-secondary q-ma-md q-pa-md">
       <div class="flex justify-between">
         <q-item class="text-white">
@@ -229,7 +225,7 @@ export default defineComponent({
     }
 
     async function createNewPost() {
-      if (state.messageBody == "") {
+      if (state.messageBody == "" && state.fileName == "") {
         state.errorBody = true;
         return;
       }
