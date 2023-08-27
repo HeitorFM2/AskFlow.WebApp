@@ -43,54 +43,53 @@
         </template>
       </q-select>
 
-      <div class="questions q-mt-xl q-pa-lg">
-        <p class="text-center text-h5 text-weight-medium">Feed</p>
-        <q-intersection
-          transition="scale"
-          v-for="(q, index) in state.posts"
-          :key="index"
-        >
-          <q-card
-            class="q-ma-lg card-questions"
-            @click="(state.postDetail = q), (state.openDialogPost = true)"
-          >
-            <q-item class="q-pt-md">
-              <q-item-section avatar>
-                <q-avatar>
-                  <q-img :src="q.img" :ratio="1" />
-                </q-avatar>
-              </q-item-section>
-              <q-item-section
-                >{{ q.first_name }} {{ q.last_name }}</q-item-section
-              >
-            </q-item>
-            <q-card-section>
-              <q-input
-                v-model="q.message"
-                borderless
-                :readonly="true"
-                color="white"
-                type="textarea"
-                :input-style="{
-                  resize: 'none',
-                  height: q.message.length < 100 ? '50px' : '100px',
-                  color: 'white',
-                }"
-              />
-              <q-img
-                v-show="q.imgpost"
-                :src="q.imgpost"
-                style="max-width: 400px"
-                :ratio="1"
-              />
-              <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
-            </q-card-section>
-            <q-tooltip class="bg-primary" :offset="[10, 10]">
-              Click to see the answers to this post
-            </q-tooltip>
-          </q-card>
-        </q-intersection>
-      </div>
+      <p class="text-center text-h5 text-weight-medium q-mt-lg text-white">
+        Home page
+      </p>
+      <q-intersection
+        class="card-questions"
+        @click="(state.postDetail = q), (state.openDialogPost = true)"
+        v-for="(q, index) in state.posts"
+        :key="index"
+      >
+        <q-item class="q-pt-md">
+          <q-item-section avatar>
+            <q-avatar>
+              <q-img :src="q.img" :ratio="1" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section class="text-caption q-mt-md">
+            {{ q.first_name }} {{ q.last_name }}
+            <p>{{ formatDate(q.CreatedAt) }}</p>
+          </q-item-section>
+        </q-item>
+        <q-card-section>
+          <q-input
+            v-show="q.message"
+            v-model="q.message"
+            borderless
+            :readonly="true"
+            color="white"
+            type="textarea"
+            :input-style="{
+              resize: 'none',
+              height: q.message.length < 100 ? '50px' : '100px',
+              color: 'white',
+            }"
+          />
+          <q-img
+            v-show="q.imgpost"
+            :src="q.imgpost"
+            style="max-width: 400px"
+            :ratio="1"
+          />
+          <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
+        </q-card-section>
+        <q-tooltip class="bg-primary" :offset="[10, 10]">
+          Click to see the answers to this post
+        </q-tooltip>
+        <q-separator color="primary" />
+      </q-intersection>
     </div>
     <q-btn
       class="fixed-btn"
@@ -140,7 +139,10 @@
     />
   </q-dialog>
 
-  <q-dialog v-model="state.openNewPost" @hide="state.fileName = []">
+  <q-dialog
+    v-model="state.openNewPost"
+    @hide="(state.fileName = []), (state.messageBody = '')"
+  >
     <q-card class="send-question bg-secondary q-ma-md q-pa-md">
       <div class="flex justify-between">
         <q-item class="text-white">
@@ -198,6 +200,7 @@ import { imgImgur } from "../service/img";
 import { LocalStorage } from "quasar";
 import ViewQuestion from "src/components/ViewQuestion.vue";
 import { hideLoading, showLoading, showNegativeNotify } from "src/util/plugins";
+import { formatDate } from "src/util/date";
 
 export default defineComponent({
   name: "PageIndex",
@@ -250,7 +253,7 @@ export default defineComponent({
     }
 
     async function createNewPost() {
-      if (state.messageBody == "") {
+      if (state.messageBody == "" && state.fileName == "") {
         state.errorBody = true;
         return;
       }
@@ -309,6 +312,7 @@ export default defineComponent({
       state,
       list,
       createNewPost,
+      formatDate,
     };
   },
 });

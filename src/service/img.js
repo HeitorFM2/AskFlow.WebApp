@@ -16,6 +16,9 @@ export function imgImgur(data) {
       }
     })
     .catch((error) => {
+      if (error.response.status == 401) {
+        logout()
+      }
       console.error('Error during API query:', error);
     });
 }

@@ -134,24 +134,29 @@ export default defineComponent({
             state.alert = true;
             return;
           }
-          state.userData = await Login(data);
-          state.userData.data.success ? router.push("/home") : "";
-
-          LocalStorage.set("iduser", state.userData.data.data.ID);
-          LocalStorage.set("token", state.userData.token);
+          showLoading("Loading...");
+          await Login(data).then((response) => {
+            if (response.data.success) {
+              router.push("/home");
+              LocalStorage.set("iduser", response.data.data.ID);
+              LocalStorage.set("token", response.token);
+            }
+          });
         } else {
           if (!email || !pass || !first_name || !last_name) {
             state.alert = true;
             return;
           }
-          if (!email || !pass) {
-            state.alert = true;
-            return;
-          }
-          await Register(data);
-          state.pass = "";
-          state.email = "";
-          state.pageLogin = true;
+          showLoading("Loading...");
+          await Register(data).then((response) => {
+            if (response.success) {
+              state.pass = "";
+              state.email = "";
+              state.first_name = "";
+              state.last_name = "";
+              state.pageLogin = true;
+            }
+          });
         }
       } catch (error) {
         console.warn(error);

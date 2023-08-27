@@ -1,6 +1,9 @@
 <template>
-  <div class="view-question q-my-xl q-pa-md bg-primary">
-    <div class="flex q-pa-md justify-end">
+  <div
+    class="view-question q-pa-md bg-primary"
+    :style="['height', state.responsePost ? '80%' : '40%']"
+  >
+    <div class="flex justify-end">
       <q-btn flat round color="white" icon="close" @click="closeDialog" />
     </div>
     <q-card class="q-ma-md q-pa-md" style="background-color: rgb(39, 36, 36)">
@@ -22,6 +25,7 @@
           </q-item>
         </div>
         <q-input
+          v-show="postDetail.message"
           v-model="state.messageBody"
           borderless
           :readonly="true"
@@ -68,7 +72,7 @@
             name="close"
             color="white"
             class="cursor-pointer"
-            @click="deleteResponsePost(q.id)"
+            @click="deleteResponsePost(q.ID)"
           />
         </div>
         <div class="flex justify-between">
@@ -148,7 +152,7 @@
         <q-btn
           label="Confirmar"
           color="secondary"
-          @click="sendResponse(state.responseBody, userData.ID, postDetail.id)"
+          @click="sendResponse(state.responseBody, userData.ID, postDetail.ID)"
         />
       </q-card-actions>
     </q-card>
@@ -193,7 +197,7 @@ export default defineComponent({
     async function listResponsesPost() {
       showLoading("Loading...");
       state.responsePost = [];
-      state.responsePost = await getResponsesPost(props.postDetail.id);
+      state.responsePost = await getResponsesPost(props.postDetail.ID);
       hideLoading();
     }
 
@@ -207,7 +211,7 @@ export default defineComponent({
       try {
         await createResponse(data);
         listResponsesPost();
-        ctx.emit("reloadListIndex");
+        state.responseBody = "";
       } catch (error) {
         console.warn(error);
       } finally {
