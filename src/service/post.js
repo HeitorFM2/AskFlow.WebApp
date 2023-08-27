@@ -117,20 +117,6 @@ export function createResponse(data) {
     });
 }
 
-export function emailEdit(data) {
-  return axios.put(`${process.env.VUE_APP_API}/v1/email/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
-    .then((response) => {
-      if (response.data.success) {
-        showPositiveNotify(response.data.message);
-      }
-    })
-    .catch((error) => {
-      console.error('Error during API query:', error);
-      showNegativeNotify("Sorry, there was an error - try again later!");
-      throw error;
-    });
-}
-
 export function usernameEdit(data) {
   return axios.put(`${process.env.VUE_APP_API}/v1/username/${LocalStorage.getItem("iduser")}`, data, { headers: headers })
     .then((response) => {

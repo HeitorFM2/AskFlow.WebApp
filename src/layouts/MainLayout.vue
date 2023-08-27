@@ -19,7 +19,7 @@
           <q-item class="flex flex-center text-h6" style="color: white">
             AskFlow
             <q-tooltip class="bg-secondary" :offset="[10, 10]">
-              2023© Heitor Melegate V1.0
+              2023© Heitor Melegate V1.0.1
             </q-tooltip>
           </q-item>
 
@@ -66,28 +66,61 @@
           icon="close"
           @click="state.showPerfil = false"
         />
-        <div class="q-pt-xl flex flex-center">
-          <div class="flex items-end">
-            <q-img
-              :src="state.userData.img"
-              class="img-profile"
-              :img-style="{
-                borderRadius: '50%',
-              }"
-              :ratio="1"
-              @click="openFilePicker"
-            >
-              <q-tooltip class="bg-secondary" :offset="[10, 10]">
-                Click to edit image!
-              </q-tooltip>
-            </q-img>
-            <input
-              type="file"
-              id="fileInput"
-              style="display: none"
-              @change="fileUpload"
-            />
-          </div>
+        <div class="flex justify-end q-mt-xl q-pa-md">
+          <q-btn-dropdown
+            flat
+            color="white"
+            dense
+            rounded
+            dropdown-icon="more_vert"
+            content-class="bg-primary text-white"
+          >
+            <q-list class="text-center">
+              <q-item
+                clickable
+                dense
+                v-close-popup
+                @click="state.onDialogHide = true"
+              >
+                <q-item-section>
+                  <q-item-label> Logout </q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
+                dense
+                v-close-popup
+                @click="state.openSendEmail = true"
+              >
+                <q-item-section>
+                  <q-item-label>Contact us</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
+        <div class="flex flex-center">
+          <q-img
+            :src="state.userData.img"
+            class="img-profile"
+            :img-style="{
+              borderRadius: '50%',
+            }"
+            :ratio="1"
+            @click="openFilePicker"
+          >
+            <q-tooltip class="bg-secondary" :offset="[10, 10]">
+              Click to edit image!
+            </q-tooltip>
+          </q-img>
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            style="display: none"
+            @change="fileUpload"
+          />
           <p
             class="q-pa-md text-h5 text-white cursor-pointer"
             @click="state.editUsername = true"
@@ -108,15 +141,6 @@
               </q-tooltip>
             </div>
           </q-item>
-
-          <q-btn
-            flat
-            color="primary"
-            class="fixed-bottom"
-            label="Logout"
-            text-color="red"
-            @click="state.onDialogHide = true"
-          />
         </div>
       </q-scroll-area>
     </q-drawer>
@@ -219,24 +243,73 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="state.openSendEmail" @hide="state.alert = false">
+    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
+      <p class="text-center q-pt-lg text-h6">Contact us</p>
+      <q-form @submit="sendEmail()">
+        <q-card-section>
+          <q-input
+            standout="bg-primary"
+            v-model="state.nameEmail"
+            placeholder="Name"
+            color="white"
+            :input-style="{ color: 'white' }"
+            class="q-ma-md"
+            bg-color="secondary"
+          />
+          <q-input
+            standout="bg-primary"
+            v-model="state.email"
+            placeholder="Email"
+            color="white"
+            :input-style="{ color: 'white' }"
+            class="q-ma-md text-white"
+            bg-color="secondary"
+          />
+          <q-input
+            standout="bg-primary"
+            v-model="state.messageEmail"
+            class="q-ma-md"
+            type="textarea"
+            maxlength="300"
+            bg-color="secondary"
+            placeholder="Your message"
+            :input-style="{
+              resize: 'none',
+              color: 'white',
+            }"
+          />
+          <p v-show="state.alert" class="text-red text-center">
+            Preencha todos os campos!
+          </p>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn
+            label="Fechar"
+            color="secondary"
+            @click="state.openSendEmail = false"
+          />
+          <q-btn label="Confirmar" type="submit" color="secondary" />
+        </q-card-actions>
+      </q-form>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
+import { defineComponent, ref, reactive, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
+import { LocalStorage } from "quasar";
+
 import MenuBar from "components/MenuBar.vue";
 import Index from "src/pages/Index.vue";
-import { onBeforeMount } from "vue";
-import {
-  getUserPost,
-  getUser,
-  emailEdit,
-  imgEdit,
-  usernameEdit,
-} from "../service/post";
-import { imgImgur } from "../service/img";
-import { defineComponent, ref, reactive } from "vue";
+
+import { getUserPost, getUser, imgEdit, usernameEdit } from "../service/post";
+
+import { emailSend, emailEdit } from "../service/email";
+
 import { hideLoading, showLoading } from "src/util/plugins";
-import { LocalStorage } from "quasar";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
@@ -253,23 +326,37 @@ export default defineComponent({
   setup() {
     const state = reactive({
       myPosts: [],
-      userData: [],
       postDetail: ref([]),
+
+      userData: [],
+      firstName: ref(""),
+      lastName: ref(""),
+
+      newEmail: ref(""),
+      email: ref(""),
+      nameEmail: ref(""),
+      messageBody: ref(""),
+      messageEmail: ref(""),
+      aler: ref(false),
+
+      urlImg: ref(""),
+
       onDialogHide: ref(false),
       showQuestions: ref(false),
       showPerfil: ref(false),
       openDialogEdit: ref(false),
+      openSendEmail: ref(false),
       editUsername: ref(false),
+
       errorBody: ref(false),
-      newEmail: ref(""),
-      messageBody: ref(""),
-      urlImg: ref(""),
-      firstName: ref(""),
-      lastName: ref(""),
     });
     const router = useRouter();
 
     onBeforeMount(async () => {
+      if (!LocalStorage.getItem("token")) {
+        router.push("/");
+        return;
+      }
       list();
       listUser();
     });
@@ -351,11 +438,33 @@ export default defineComponent({
       }
     }
 
+    async function sendEmail() {
+      const { email, nameEmail, messageEmail } = state;
+      if (!email || !nameEmail || !messageEmail) {
+        state.alert = true;
+        return;
+      }
+      showLoading("Sending email...");
+      let data = {
+        name: state.nameEmail,
+        email: state.email,
+        message: state.messageEmail,
+      };
+      try {
+        await emailSend(data);
+      } catch (error) {
+        console.warn(error);
+      }
+      state.openSendEmail = false;
+      hideLoading();
+    }
+
     return {
       state,
       logout,
       list,
       editEmail,
+      sendEmail,
       editUsername,
       openFilePicker,
       fileUpload,

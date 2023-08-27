@@ -136,7 +136,6 @@
       <q-input
         v-model="state.messageBody"
         borderless
-        color="white"
         type="textarea"
         maxlength="300"
         placeholder="Ask your question..."
@@ -152,6 +151,7 @@
           borderless
           clearable
           ref="file"
+          accept="image/*"
           color="white"
           :input-style="{ color: 'white' }"
           style="max-width: 400px"
@@ -211,6 +211,10 @@ export default defineComponent({
     });
 
     onBeforeMount(async () => {
+      if (!LocalStorage.getItem("token")) {
+        router.push("/");
+        return;
+      }
       list();
     });
 
@@ -220,11 +224,8 @@ export default defineComponent({
       try {
         let response = await getPosts();
         state.posts = response.data;
-        hideLoading();
-      } catch (error) {
-        console.warn(error);
-        showNegativeNotify("Ocorreu um erro!");
-      }
+      } catch (error) {}
+      hideLoading();
     }
 
     async function createNewPost() {
@@ -252,10 +253,7 @@ export default defineComponent({
         await createPost(data);
         list();
         ctx.emit("reloadList");
-      } catch (error) {
-        console.warn(error);
-        showNegativeNotify("Ocorreu um erro!");
-      }
+      } catch (error) {}
       state.openNewPost = false;
       state.messageBody = "";
       hideLoading();

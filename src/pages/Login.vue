@@ -120,7 +120,6 @@ export default defineComponent({
     const router = useRouter();
 
     async function LoginRegister() {
-      showLoading("Loading...");
       let data = {
         first_name: state.first_name,
         last_name: state.last_name,
@@ -135,6 +134,7 @@ export default defineComponent({
             state.alert = true;
             return;
           }
+          showLoading("Loading...");
           state.userData = await Login(data);
           state.userData.data.success ? router.push("/home") : "";
 
@@ -145,10 +145,7 @@ export default defineComponent({
             state.alert = true;
             return;
           }
-          if (!email || !pass) {
-            state.alert = true;
-            return;
-          }
+          showLoading("Loading...");
           await Register(data);
           state.pass = "";
           state.email = "";
