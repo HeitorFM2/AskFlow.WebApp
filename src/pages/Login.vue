@@ -24,7 +24,7 @@
       </div>
       <q-form
         @submit="LoginRegister()"
-        style="width: 80%"
+        style="min-width: 280px; max-width: 80%"
         class="flex flex-center"
       >
         <q-input
@@ -59,7 +59,6 @@
           bg-color="primary"
           :input-style="{ color: 'white', width: '250px' }"
         />
-
         <q-input
           rounded
           standout
@@ -70,6 +69,7 @@
           color="white"
           bg-color="primary"
           :input-style="{ color: 'white' }"
+          autocomplete="false"
         >
           <template v-slot:append>
             <q-icon
@@ -81,6 +81,7 @@
         </q-input>
 
         <p v-show="state.alert" class="text-red">Preencha todos os campos!</p>
+
         <q-btn
           color="accent"
           style="width: 45%"
@@ -119,7 +120,6 @@ export default defineComponent({
     const router = useRouter();
 
     async function LoginRegister() {
-      showLoading("Loading...");
       let data = {
         first_name: state.first_name,
         last_name: state.last_name,

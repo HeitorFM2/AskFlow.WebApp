@@ -7,13 +7,11 @@ export function Login(data) {
     .then((response) => {
       if (response.status == 200) {
         return response.data;
-      } else {
-        showNegativeNotify(response.data.message);
       }
     })
     .catch((error) => {
       console.error('Erro durante o login:', error);
-      throw error;
+      showNegativeNotify(error.response.data.message);
     });
 }
 

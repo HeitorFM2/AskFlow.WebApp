@@ -19,7 +19,7 @@
           <q-item class="flex flex-center text-h6" style="color: white">
             AskFlow
             <q-tooltip class="bg-secondary" :offset="[10, 10]">
-              2023© Heitor Melegate V1.0
+              2023© Heitor Melegate V1.0.1
             </q-tooltip>
           </q-item>
 
@@ -141,15 +141,6 @@
               </q-tooltip>
             </div>
           </q-item>
-
-          <q-btn
-            flat
-            color="primary"
-            class="fixed-bottom"
-            label="Logout"
-            text-color="red"
-            @click="state.onDialogHide = true"
-          />
         </div>
       </q-scroll-area>
     </q-drawer>
@@ -322,6 +313,17 @@ import { emailSend, emailEdit } from "../service/email";
 import { hideLoading, showLoading } from "src/util/plugins";
 import { logout } from "src/util/auth";
 
+import { LocalStorage } from "quasar";
+
+import MenuBar from "components/MenuBar.vue";
+import Index from "src/pages/Index.vue";
+
+import { getUserPost, getUser, imgEdit, usernameEdit } from "../service/post";
+
+import { emailSend, emailEdit } from "../service/email";
+
+import { hideLoading, showLoading } from "src/util/plugins";
+
 export default defineComponent({
   name: "MainLayout",
 
@@ -363,6 +365,10 @@ export default defineComponent({
     const router = useRouter();
 
     onBeforeMount(async () => {
+      if (!LocalStorage.getItem("token")) {
+        router.push("/");
+        return;
+      }
       list();
       listUser();
     });
@@ -458,12 +464,33 @@ export default defineComponent({
 
         await imgEdit(formdata);
 
-        list();
+        listUser();
       } catch (error) {
         console.warn(error);
       } finally {
         hideLoading();
       }
+    }
+
+    async function sendEmail() {
+      const { email, nameEmail, messageEmail } = state;
+      if (!email || !nameEmail || !messageEmail) {
+        state.alert = true;
+        return;
+      }
+      showLoading("Sending email...");
+      let data = {
+        name: state.nameEmail,
+        email: state.email,
+        message: state.messageEmail,
+      };
+      try {
+        await emailSend(data);
+      } catch (error) {
+        console.warn(error);
+      }
+      state.openSendEmail = false;
+      hideLoading();
     }
 
     return {

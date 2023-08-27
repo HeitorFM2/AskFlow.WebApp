@@ -6,7 +6,7 @@
     <div class="flex justify-end">
       <q-btn flat round color="white" icon="close" @click="closeDialog" />
     </div>
-    <q-card class="q-ma-md q-pa-md" style="background-color: rgb(39, 36, 36)">
+    <q-card class="q-pa-md" style="background-color: rgb(39, 36, 36)">
       <p class="text-center text-h5 text-weight-medium text-white">Post</p>
       <q-separator />
       <div>
@@ -18,9 +18,9 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-subtitle1">
-              {{ postDetail.first_name }}
-              {{ postDetail.last_name }}
+            <q-item-section class="text-caption q-mt-md">
+              {{ postDetail.first_name }} {{ postDetail.last_name }}
+              <p>{{ formatDate(postDetail.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
         </div>
@@ -33,6 +33,7 @@
           type="textarea"
           :input-style="{
             resize: 'none',
+            height: '80px',
             color: 'white',
           }"
         />
@@ -54,12 +55,8 @@
         >
       </q-card-actions>
     </q-card>
-    <q-card
-      class="bg-secondary q-ma-md q-pa-md q-mt-xl"
-      v-show="state.responsePost"
-    >
+    <q-card class="bg-secondary q-pa-md q-mt-xl" v-show="state.responsePost">
       <p class="text-center text-h5 text-weight-medium text-white">Answers</p>
-      <q-separator />
       <q-intersection
         transition="jump-down"
         v-for="(q, index) in state.responsePost"
@@ -88,6 +85,13 @@
               <p>{{ formatDate(q.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
+          <q-icon
+            v-if="userData.ID == q.iduser"
+            name="close"
+            color="white"
+            class="cursor-pointer q-pt-md"
+            @click="deleteResponsePost(q.ID)"
+          />
         </div>
         <q-input
           v-model="q.message"
@@ -102,7 +106,6 @@
             color: 'white',
           }"
         />
-        <q-separator color="primary" style="width: 100%" />
       </q-intersection>
     </q-card>
   </div>
@@ -125,10 +128,9 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section class="text-subtitle1"
-              >{{ userData.first_name }}
-              {{ userData.last_name }}</q-item-section
-            >
+            <q-item-section class="text-caption">
+              {{ userData.first_name }} {{ userData.last_name }}
+            </q-item-section>
           </q-item>
         </div>
         <q-input

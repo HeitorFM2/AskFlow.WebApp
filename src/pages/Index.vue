@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="column flex-center q-pa-md">
+    <div class="column flex-center q-pa-sm">
       <q-select
         standout
         dense
@@ -31,10 +31,9 @@
         <template v-slot:option="scope">
           <q-item v-bind="scope.itemProps">
             <q-item-section>
-              <q-item-label caption class="text-white"
-                >{{ scope.opt.first_name }}
-                {{ scope.opt.last_name }}</q-item-label
-              >
+              <q-item-label caption class="text-white">
+                {{ scope.opt.first_name }} {{ scope.opt.last_name }}
+              </q-item-label>
               <q-item-label class="text-white">
                 {{ scope.opt.message }}
               </q-item-label>
@@ -103,34 +102,6 @@
     </q-btn>
   </q-page>
 
-  <q-dialog v-model="state.onDialogHide">
-    <q-card class="bg-primary text-white dialog-response">
-      <q-card-section>
-        <div class="text-h6 text-center">Your answer</div>
-        <q-input
-          v-model="state.messageReponse"
-          borderless
-          color="white"
-          type="textarea"
-          placeholder="Make your answer.."
-          :input-style="{
-            resize: 'none',
-            height: '220px',
-            color: 'white',
-          }"
-        />
-      </q-card-section>
-      <q-card-actions align="right" class="q-pa-md">
-        <q-btn
-          label="Close"
-          color="secondary"
-          @click="state.onDialogHide = false"
-        />
-        <q-btn label="Confirm" color="secondary" @click="sendResponse()" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
   <q-dialog v-model="state.openDialogPost">
     <ViewQuestion
       :postDetail="state.postDetail"
@@ -152,16 +123,15 @@
             </q-avatar>
           </q-item-section>
 
-          <q-item-section class="text-subtitle1"
-            >{{ userData.first_name }} {{ userData.last_name }}</q-item-section
-          >
+          <q-item-section class="text-caption">
+            {{ userData.first_name }} {{ userData.last_name }}
+          </q-item-section>
         </q-item>
       </div>
 
       <q-input
         v-model="state.messageBody"
         borderless
-        color="white"
         type="textarea"
         maxlength="300"
         placeholder="Ask your question..."
@@ -177,6 +147,7 @@
           borderless
           clearable
           ref="file"
+          accept="image/*"
           color="white"
           :input-style="{ color: 'white' }"
           style="max-width: 400px"
@@ -236,6 +207,10 @@ export default defineComponent({
     });
 
     onBeforeMount(async () => {
+      if (!LocalStorage.getItem("token")) {
+        router.push("/");
+        return;
+      }
       list();
     });
 
@@ -245,11 +220,8 @@ export default defineComponent({
       try {
         let response = await getPosts();
         state.posts = response.data;
-        hideLoading();
-      } catch (error) {
-        console.warn(error);
-        showNegativeNotify("Ocorreu um erro!");
-      }
+      } catch (error) {}
+      hideLoading();
     }
 
     async function createNewPost() {
@@ -277,10 +249,7 @@ export default defineComponent({
         await createPost(data);
         list();
         ctx.emit("reloadList");
-      } catch (error) {
-        console.warn(error);
-        showNegativeNotify("Ocorreu um erro!");
-      }
+      } catch (error) {}
       state.openNewPost = false;
       state.messageBody = "";
       hideLoading();

@@ -89,9 +89,6 @@ export function createPost(data) {
       if (response.data.success) {
         showPositiveNotify("Post created successfully!");
         return response.data
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
@@ -116,7 +113,7 @@ export function createResponse(data) {
     })
     .catch((error) => {
       console.error('Error during API query:', error);
-      throw error;
+      showNegativeNotify("Sorry, there was an error - try again later!");
     });
 }
 
@@ -157,9 +154,6 @@ export function deletePost(idpost) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Post successfully deleted");
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
@@ -176,9 +170,6 @@ export function deleteResponse(idresponse) {
     .then((response) => {
       if (response.data.success) {
         showPositiveNotify("Response successfully deleted");
-      } else {
-        showNegativeNotify(response.data.message);
-        throw new Error(response.data.message);
       }
     })
     .catch((error) => {
