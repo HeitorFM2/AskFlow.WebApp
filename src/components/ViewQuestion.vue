@@ -14,7 +14,12 @@
           <q-item class="text-white">
             <q-item-section avatar>
               <q-avatar>
-                <q-img :src="postDetail.img" :ratio="1" />
+                <q-img
+                  :src="postDetail.img"
+                  @click="(state.openImg = true), (state.img = postDetail.img)"
+                  :ratio="1"
+                  class="cursor-pointer"
+                />
               </q-avatar>
             </q-item-section>
 
@@ -37,7 +42,12 @@
             color: 'white',
           }"
         />
-        <q-img v-show="postDetail.imgpost" :src="postDetail.imgpost" />
+        <q-img
+          v-show="postDetail.imgpost"
+          :src="postDetail.imgpost"
+          style="width: 40%"
+          class="q-mb-md"
+        />
       </div>
 
       <q-separator />
@@ -76,7 +86,12 @@
           <q-item class="text-white">
             <q-item-section avatar>
               <q-avatar>
-                <q-img :src="q.img" :ratio="1" />
+                <q-img
+                  :src="q.img"
+                  @click="(state.openImg = true), (state.img = q.img)"
+                  :ratio="1"
+                  class="cursor-pointer"
+                />
               </q-avatar>
             </q-item-section>
 
@@ -85,13 +100,6 @@
               <p>{{ formatDate(q.CreatedAt) }}</p>
             </q-item-section>
           </q-item>
-          <q-icon
-            v-if="userData.ID == q.iduser"
-            name="close"
-            color="white"
-            class="cursor-pointer q-pt-md"
-            @click="deleteResponsePost(q.ID)"
-          />
         </div>
         <q-input
           v-model="q.message"
@@ -106,6 +114,7 @@
             color: 'white',
           }"
         />
+        <q-separator />
       </q-intersection>
     </q-card>
   </div>
@@ -117,6 +126,7 @@
         box-shadow: rgba(39, 36, 36) 5px 10px 10px;
         border-radius: 10px;
         width: 50%;
+        min-width: 350px;
       "
     >
       <q-card-section>
@@ -159,6 +169,28 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="state.openImg">
+    <q-card
+      class="bg-primary q-pa-md q-ma-lg"
+      style="
+        box-shadow: rgba(39, 36, 36) 5px 10px 10px;
+        max-width: 20%;
+        min-width: 350px;
+      "
+    >
+      <div class="flex justify-end">
+        <q-btn
+          flat
+          round
+          color="white"
+          icon="close"
+          @click="state.openImg = false"
+        />
+      </div>
+      <q-img :src="state.img" />
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -189,6 +221,8 @@ export default defineComponent({
       responseBody: ref(""),
       responsePost: ref([]),
       messagePost: ref(""),
+      img: ref(""),
+      openImg: ref(false),
       openDialogResponse: ref(false),
     });
 

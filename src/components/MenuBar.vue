@@ -3,7 +3,10 @@
     <q-item class="q-pb-sm">
       <div class="flex flex-center questions-menu">
         <q-item-section avatar class="q-pa-md">
-          <q-icon color="white" name="chat_bubble_outline" />
+          <q-icon
+            color="white"
+            :name="op.message == 'Image' ? 'image' : 'chat_bubble_outline'"
+          />
         </q-item-section>
 
         <q-item-section style="color: white" @click="viewPost(op.ID)">

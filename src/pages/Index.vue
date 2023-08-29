@@ -16,7 +16,7 @@
           (state.postDetail = state.search), (state.openDialogPost = true)
         "
         @filter="filterPost"
-        popup-content-style="background-color: rgb(39, 36, 36);"
+        popup-content-style="background-color: rgb(39, 36, 36); height: 200px"
       >
         <template v-slot:prepend>
           <q-icon name="search" color="white" />
@@ -79,14 +79,11 @@
           <q-img
             v-show="q.imgpost"
             :src="q.imgpost"
-            style="max-width: 400px"
+            style="max-width: 100%; height: 300px"
             :ratio="1"
           />
           <div class="text-caption q-pt-md">Answers: {{ q.response }}</div>
         </q-card-section>
-        <q-tooltip class="bg-primary" :offset="[10, 10]">
-          Click to see the answers to this post
-        </q-tooltip>
         <q-separator color="primary" />
       </q-intersection>
     </div>
@@ -150,7 +147,7 @@
           accept="image/*"
           color="white"
           :input-style="{ color: 'white' }"
-          style="max-width: 400px"
+          style="max-width: 300px"
           dense
         />
         <q-btn flat color="accent" round icon="attachment" @click="tclick">

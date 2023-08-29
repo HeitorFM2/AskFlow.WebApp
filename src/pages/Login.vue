@@ -1,9 +1,12 @@
 <template>
   <q-layout view="hHh LpR lff" class="flex column items-center flex-center">
-    <p class="text-white text-h3 q-pa-sm">AskFlow</p>
-    <div
-      class="q-pa-md login-card q-pa-md flex column justify-center items-center"
-    >
+    <q-btn
+      flat
+      label="< AskFlow />"
+      class="text-h4 text-weight-bold text-white q-ma-md"
+      dense
+    />
+    <q-card class="login-card q-pa-md flex column justify-center items-center">
       <div class="text-white text-subtitle1 q-pa-lg" v-show="!state.pageLogin">
         Already have an account?
         <span
@@ -87,11 +90,12 @@
           style="width: 45%"
           size="md"
           type="submit"
-          class="q-pa-md q-mt-lg"
+          dense
+          class="q-mt-lg"
           :label="state.pageLogin ? 'Login' : 'Register'"
         />
       </q-form>
-    </div>
+    </q-card>
   </q-layout>
 </template>
 

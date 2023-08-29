@@ -17,7 +17,7 @@
       <q-scroll-area class="fit">
         <q-list>
           <q-item class="flex flex-center text-h6" style="color: white">
-            AskFlow
+            <q-btn flat label="< AskFlow />" />
             <q-tooltip class="bg-secondary" :offset="[10, 10]">
               2023© Heitor Melegate V1.0.1
             </q-tooltip>
@@ -121,15 +121,16 @@
             style="display: none"
             @change="fileUpload"
           />
-          <p
-            class="q-pa-md text-h5 text-white cursor-pointer"
+          <q-btn
+            class="q-ma-md text-white"
+            flat
+            :label="state.userData.first_name + ' ' + state.userData.last_name"
             @click="state.editUsername = true"
           >
-            {{ state.userData.first_name }} {{ state.userData.last_name }}
             <q-tooltip class="bg-secondary" :offset="[10, 10]">
               Click to edit username!
             </q-tooltip>
-          </p>
+          </q-btn>
           <q-item class="q-pb-md text-white" style="width: 80%">
             <div
               class="options-account flex text-center q-pa-md"
@@ -137,7 +138,7 @@
             >
               <q-item-section> {{ state.userData.email }} </q-item-section>
               <q-tooltip class="bg-secondary" :offset="[10, 10]">
-                Click to edit image email!
+                Click to edit Email!
               </q-tooltip>
             </div>
           </q-item>
@@ -231,6 +232,9 @@
           class="q-ma-md text-white"
           bg-color="secondary"
         />
+        <p v-show="state.errorBody" class="text-red text-center">
+          Preencha todos os campos!
+        </p>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn
@@ -238,11 +242,7 @@
           color="secondary"
           @click="state.editUsername = false"
         />
-        <q-btn
-          label="Confirmar"
-          color="secondary"
-          @click="editUsername(state.firstName, state.lastName)"
-        />
+        <q-btn label="Confirmar" color="secondary" @click="editUsername()" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -429,15 +429,24 @@ export default defineComponent({
       }
     }
 
-    async function editUsername(firstName, lastName) {
-      showLoading("Loading...");
+    async function editUsername() {
       try {
-        await usernameEdit({ first_name: firstName, last_name: lastName });
+        const { firstName, lastName } = state;
+        if (!firstName || !lastName) {
+          state.errorBody = true;
+          return;
+        }
+
+        showLoading("Loading...");
+        await usernameEdit({
+          first_name: state.firstName,
+          last_name: state.lastName,
+        });
         listUser();
       } catch (error) {
         console.warn(error);
       } finally {
-        state.openDialogEdit = false;
+        state.editUsername = false;
         hideLoading();
       }
     }

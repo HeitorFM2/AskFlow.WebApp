@@ -1,8 +1,8 @@
 {
-  "name": "askflow.webapp",
+  "name": "askflow",
   "version": "0.0.1",
   "description": "Question and Answer website",
-  "productName": "AskFlow.WebApp",
+  "productName": "AskFlow",
   "author": "HeitorFM <101652747+HeitorFM2@users.noreply.github.com>",
   "private": true,
   "scripts": {

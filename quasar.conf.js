@@ -85,7 +85,7 @@ module.exports = configure(function (ctx) {
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
-      config: { loading: {}, },
+      config: { loading: {} },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
@@ -98,7 +98,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Loading', 'Notify'],
+      plugins: ["Loading", "Notify"],
     },
 
     // animations: 'all', // --- includes all animations
@@ -144,8 +144,8 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `AskFlow.WebApp`,
-        short_name: `AskFlow.WebApp`,
+        name: `AskFlow`,
+        short_name: `AskFlow`,
         description: `Question and Answer website`,
         display: "standalone",
         orientation: "portrait",
@@ -209,7 +209,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "askflow.webapp",
+        appId: "askflow",
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

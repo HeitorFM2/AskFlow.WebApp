@@ -62,32 +62,13 @@ body {
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
 }
 
-.view-answers {
-  width: 100% !important;
-  max-width: 60% !important;
-  width: 30%;
-  min-width: 200px;
-  box-shadow: rgba(39, 36, 36) 0px 5px 5px;
-  height: 80%;
-}
-
 .send-question {
   border-radius: 10px !important;
   width: 100% !important;
   max-width: 40% !important;
-  min-width: 300px;
+  min-width: 350px;
   box-shadow: rgba(39, 36, 36) 0px 5px 5px;
-  height: 32%;
-}
-
-.questions {
-  border-radius: 10px;
-
-  box-shadow: rgba(39, 36, 36) 0px 10px 30px;
-
-  p {
-    color: white;
-  }
+  height: 35%;
 }
 
 .card-questions {
@@ -104,34 +85,21 @@ body {
 }
 
 .login-card {
-  background-color: rgba(39, 36, 36, 0.7);
-  box-shadow: rgba(39, 36, 36) 5px 10px 10px;
-  width: 30%;
-  min-width: 300px;
-  height: 600px;
-  border-radius: 30px;
+  background-color: rgba(39, 36, 36);
+  box-shadow: rgb(37, 33, 33) 10px 20px 20px;
+  max-width: 25%;
+  min-width: 350px;
+  height: 550px;
 
   .q-input {
-    width: 90%;
+    width: 100%;
   }
-}
-
-.dialog-response {
-  width: 50%;
-  border-radius: 20px !important;
-  height: 360px;
 }
 
 .fixed-btn {
   position: fixed;
   bottom: 20px;
   right: 380px;
-}
-
-@media (max-width: 1024px) {
-  .fixed-btn {
-    right: 20px;
-  }
 }
 
 .img-profile {
@@ -144,6 +112,8 @@ body {
   }
 }
 
-.q-menu {
-  max-height: 15rem;
+@media (max-width: 1024px) {
+  .fixed-btn {
+    right: 20px;
+  }
 }
