@@ -1,508 +1,220 @@
 <template>
   <q-layout view="hHh LpR lff">
-    <div class="flex justify-between q-pa-md lt-md">
-      <q-btn
-        color="secondary"
-        icon="question_answer"
-        @click="state.showQuestions = true"
-      />
-      <q-btn color="secondary" icon="person" @click="state.showPerfil = true" />
+    <!-- Mobile top bar -->
+    <div class="mobile-topbar flex justify-between items-center q-pa-sm q-px-md lt-md">
+      <span class="nav-brand" style="font-size: 1.1rem">&lt; AskFlow /&gt;</span>
+      <div class="flex q-gutter-x-xs">
+        <q-btn flat round dense icon="menu" color="accent" @click="leftDrawer = true" />
+        <q-btn flat round dense icon="person" color="accent" @click="rightDrawer = true" />
+      </div>
     </div>
-    <q-drawer
-      v-model="state.showQuestions"
-      show-if-above
-      :breakpoint="1024"
-      class="bg-primary"
-    >
-      <q-scroll-area class="fit">
-        <q-list>
-          <q-item class="flex flex-center text-h6" style="color: white">
-            <q-btn flat label="< AskFlow />" />
-            <q-tooltip class="bg-secondary" :offset="[10, 10]">
-              2023© Heitor Melegate V1.0.1
-            </q-tooltip>
-          </q-item>
 
-          <q-separator />
+    <!-- Left nav drawer (Feed only) -->
+    <q-drawer v-model="leftDrawer" show-if-above :breakpoint="1024" class="nav-drawer">
+      <q-scroll-area class="fit">
+        <div class="q-px-md q-pt-xl q-pb-lg">
+          <div class="nav-brand" style="font-size: 1.15rem">&lt; AskFlow /&gt;</div>
+        </div>
+
+        <q-separator style="background: rgba(79,134,247,0.1)" class="q-mx-md" />
+
+        <q-list class="q-mt-sm q-pb-md">
           <q-item
-            class="flex justify-between text-caption q-pt-md items-center text-center"
-            style="color: white"
+            v-for="nav in navItems"
+            :key="nav.key"
+            clickable
+            :class="['nav-item', $route.name === nav.route ? 'nav-item-active' : '']"
+            @click="navigate(nav.route)"
           >
-            Your questions
-            <q-btn
-              flat
-              class="lt-md"
-              color="white"
-              icon="close"
-              @click="state.showQuestions = false"
-            />
+            <q-item-section avatar style="min-width: 36px">
+              <q-icon :name="nav.icon" :color="$route.name === nav.route ? 'accent' : ''" size="20px" />
+            </q-item-section>
+            <q-item-section style="font-size: 0.93rem; font-weight: 500">
+              {{ $t(nav.labelKey) }}
+            </q-item-section>
           </q-item>
-          <div>
-            <MenuBar
-              v-for="(op, index) in state.myPosts"
-              :op="op"
-              :userData="state.userData"
-              :key="index"
-              @reloadList="list(), reloadList()"
-            />
-          </div>
         </q-list>
       </q-scroll-area>
     </q-drawer>
 
+    <!-- Right profile drawer -->
     <q-drawer
-      v-model="state.showPerfil"
+      v-model="rightDrawer"
       side="right"
       show-if-above
       :breakpoint="1024"
-      :width="350"
-      class="bg-primary"
+      :width="268"
+      class="profile-drawer"
     >
-      <q-scroll-area class="fit">
-        <q-btn
-          flat
-          class="lt-md q-pa-md"
-          color="white"
-          icon="close"
-          @click="state.showPerfil = false"
-        />
-        <div class="flex justify-end q-mt-xl q-pa-md">
-          <q-btn-dropdown
-            flat
-            color="white"
-            dense
-            rounded
-            dropdown-icon="more_vert"
-            content-class="bg-primary text-white"
-          >
-            <q-list class="text-center">
-              <q-item
-                clickable
-                dense
-                v-close-popup
-                @click="state.onDialogHide = true"
-              >
-                <q-item-section>
-                  <q-item-label class="text-red"> Logout </q-item-label>
-                </q-item-section>
-              </q-item>
+      <div class="column fit" style="height: 100%">
+        <!-- Close button (mobile) -->
+        <div class="flex justify-end q-pa-sm lt-md">
+          <q-btn flat round dense icon="close" color="white" size="sm" @click="rightDrawer = false" />
+        </div>
 
-              <q-item
-                clickable
-                dense
-                v-close-popup
-                @click="state.openSendEmail = true"
-              >
-                <q-item-section>
-                  <q-item-label>Contact us</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
-        <div class="flex flex-center">
-          <q-img
-            :src="state.userData.img"
-            class="img-profile"
-            :img-style="{
-              borderRadius: '50%',
-            }"
-            :ratio="1"
-            @click="openFilePicker"
-          >
-            <q-tooltip class="bg-secondary" :offset="[10, 10]">
-              Click to edit image!
-            </q-tooltip>
-          </q-img>
-          <input
-            type="file"
-            id="fileInput"
-            accept="image/*"
-            style="display: none"
-            @change="fileUpload"
-          />
-          <q-btn
-            class="q-ma-md text-white"
-            flat
-            :label="state.userData.first_name + ' ' + state.userData.last_name"
-            @click="state.editUsername = true"
-          >
-            <q-tooltip class="bg-secondary" :offset="[10, 10]">
-              Click to edit username!
-            </q-tooltip>
-          </q-btn>
-          <q-item class="q-pb-md text-white" style="width: 80%">
-            <div
-              class="options-account flex text-center q-pa-md"
-              @click="state.openDialogEdit = true"
-            >
-              <q-item-section> {{ state.userData.email }} </q-item-section>
-              <q-tooltip class="bg-secondary" :offset="[10, 10]">
-                Click to edit Email!
-              </q-tooltip>
+        <!-- Avatar + name -->
+        <div class="flex flex-center column q-pt-xl q-px-lg q-pb-lg">
+          <div class="avatar-upload-wrap" @click="triggerAvatarUpload">
+            <div class="avatar-ring">
+              <q-avatar size="80px" color="primary" text-color="white" class="text-h4">
+                <img
+                  v-if="user?.avatarUrl"
+                  :src="user.avatarUrl"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+                <span v-else>{{ user?.identification?.[0]?.toUpperCase() || '?' }}</span>
+              </q-avatar>
             </div>
-          </q-item>
+            <div class="avatar-cam-badge">
+              <q-icon name="photo_camera" color="white" size="11px" />
+            </div>
+            <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 6]">
+              {{ $t('profile.updatePhoto') }}
+            </q-tooltip>
+          </div>
+
+          <div v-if="uploadingAvatar" class="q-mt-sm">
+            <q-spinner color="accent" size="16px" />
+            <span class="text-caption text-accent q-ml-xs">{{ $t('profile.uploading') }}</span>
+          </div>
+
+          <p class="text-white text-subtitle2 text-weight-bold q-mt-md q-mb-xs">
+            {{ user?.userName }}
+          </p>
+          <p class="q-mb-none" style="font-size: 0.78rem; color: rgba(150,170,220,0.55)">
+            @{{ user?.identification }}
+          </p>
         </div>
-      </q-scroll-area>
+
+        <q-separator style="background: rgba(79,134,247,0.1)" class="q-mx-md" />
+
+        <!-- Profile nav items -->
+        <q-list class="q-mt-sm">
+          <q-item
+            v-for="nav in profileNavItems"
+            :key="nav.key"
+            clickable
+            :class="['nav-item', $route.name === nav.route ? 'nav-item-active' : '']"
+            @click="navigateProfile(nav.route)"
+          >
+            <q-item-section avatar style="min-width: 36px">
+              <q-icon :name="nav.icon" :color="$route.name === nav.route ? 'accent' : ''" size="20px" />
+            </q-item-section>
+            <q-item-section style="font-size: 0.93rem; font-weight: 500">
+              {{ $t(nav.labelKey) }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <q-space />
+
+        <q-separator style="background: rgba(79,134,247,0.1)" class="q-mx-md" />
+
+        <!-- Logout -->
+        <q-list class="q-mb-sm">
+          <q-item clickable class="nav-item" @click="confirmLogout">
+            <q-item-section avatar style="min-width: 36px">
+              <q-icon name="logout" color="negative" size="20px" />
+            </q-item-section>
+            <q-item-section style="font-size: 0.93rem; font-weight: 500; color: #ef4444">
+              {{ $t('nav.logout') }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
     </q-drawer>
+
+    <!-- Hidden file input -->
+    <input
+      ref="avatarInput"
+      type="file"
+      accept="image/*"
+      style="display: none"
+      @change="uploadAvatar"
+    />
+
+    <!-- Page content -->
     <q-page-container>
-      <Index
-        @reloadList="list()"
-        :userData="state.userData"
-        ref="indexComponentRef"
-      />
+      <router-view />
     </q-page-container>
   </q-layout>
-
-  <q-dialog v-model="state.onDialogHide">
-    <q-card class="bg-primary text-white" style="width: 20%; min-width: 200px">
-      <q-card-section>
-        Are you sure you want to log out?
-        <q-icon name="sentiment_very_dissatisfied"
-      /></q-card-section>
-      <q-card-actions align="right">
-        <q-btn
-          label="Fechar"
-          color="secondary"
-          @click="state.onDialogHide = false"
-        />
-        <q-btn label="Confirmar" color="secondary" @click="logout()" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
-  <q-dialog v-model="state.openDialogEdit">
-    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
-      <q-card-section>
-        <q-input
-          standout="bg-primary"
-          v-model="state.userData.email"
-          label="Your email"
-          :readonly="true"
-          :input-style="{ color: 'white' }"
-          class="q-ma-md"
-          bg-color="secondary"
-        />
-        <q-input
-          standout="bg-primary"
-          v-model="state.newEmail"
-          placeholder="New email"
-          maxlength="120"
-          color="white"
-          :input-style="{ color: 'white' }"
-          class="q-ma-md text-white"
-          bg-color="secondary"
-        />
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn
-          label="Fechar"
-          color="secondary"
-          @click="state.openDialogEdit = false"
-        />
-        <q-btn
-          label="Confirmar"
-          color="secondary"
-          @click="editEmail(state.newEmail)"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
-  <q-dialog v-model="state.editUsername">
-    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
-      <q-card-section>
-        <q-input
-          standout="bg-primary"
-          v-model="state.firstName"
-          placeholder="First name"
-          maxlength="120"
-          color="white"
-          :input-style="{ color: 'white' }"
-          class="q-ma-md"
-          bg-color="secondary"
-        />
-        <q-input
-          standout="bg-primary"
-          v-model="state.lastName"
-          placeholder="Last name"
-          maxlength="120"
-          color="white"
-          :input-style="{ color: 'white' }"
-          class="q-ma-md text-white"
-          bg-color="secondary"
-        />
-        <p v-show="state.errorBody" class="text-red text-center">
-          Preencha todos os campos!
-        </p>
-      </q-card-section>
-      <q-card-actions align="right">
-        <q-btn
-          label="Fechar"
-          color="secondary"
-          @click="state.editUsername = false"
-        />
-        <q-btn label="Confirmar" color="secondary" @click="editUsername()" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-
-  <q-dialog v-model="state.openSendEmail" @hide="state.alert = false">
-    <q-card class="bg-primary text-white" style="width: 50%; min-width: 250px">
-      <p class="text-center q-pt-lg text-h6">Contact us</p>
-      <q-form @submit="sendEmail()">
-        <q-card-section>
-          <q-input
-            standout="bg-primary"
-            v-model="state.nameEmail"
-            placeholder="Name"
-            color="white"
-            maxlength="120"
-            :input-style="{ color: 'white' }"
-            class="q-ma-md"
-            bg-color="secondary"
-          />
-          <q-input
-            standout="bg-primary"
-            v-model="state.email"
-            placeholder="Email"
-            color="white"
-            maxlength="120"
-            :input-style="{ color: 'white' }"
-            class="q-ma-md text-white"
-            bg-color="secondary"
-          />
-          <q-input
-            standout="bg-primary"
-            v-model="state.messageEmail"
-            class="q-ma-md"
-            type="textarea"
-            maxlength="600"
-            bg-color="secondary"
-            placeholder="Your message"
-            :input-style="{
-              resize: 'none',
-              color: 'white',
-            }"
-          />
-          <p v-show="state.errorBody" class="text-red text-center">
-            Preencha todos os campos!
-          </p>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            label="Fechar"
-            color="secondary"
-            @click="state.openSendEmail = false"
-          />
-          <q-btn label="Confirmar" type="submit" color="secondary" />
-        </q-card-actions>
-      </q-form>
-    </q-card>
-  </q-dialog>
 </template>
 
-<script>
-import { defineComponent, ref, reactive, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from 'src/stores/auth'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
-import MenuBar from "components/MenuBar.vue";
-import Index from "src/pages/Index.vue";
-import { getUserPost, getUser, imgEdit, usernameEdit } from "../service/post";
-import { emailSend, emailEdit } from "../service/email";
-import { hideLoading, showLoading } from "src/util/plugins";
-import { logout } from "src/util/auth";
+const $q = useQuasar()
+const router = useRouter()
+const route = useRoute()
+const authStore = useAuthStore()
+const { t } = useI18n()
 
-import { LocalStorage } from "quasar";
+const leftDrawer = ref(false)
+const rightDrawer = ref(false)
+const avatarInput = ref(null)
+const uploadingAvatar = ref(false)
 
-export default defineComponent({
-  name: "MainLayout",
+const user = computed(() => authStore.user)
 
-  components: {
-    MenuBar,
-    Index,
-  },
-  methods: {
-    reloadList() {
-      this.$refs.indexComponentRef.list();
-    },
-  },
-  setup() {
-    const state = reactive({
-      myPosts: [],
-      postDetail: ref([]),
+const navItems = [
+  { key: 'feed', labelKey: 'nav.feed', route: 'feed', icon: 'dynamic_feed' },
+]
 
-      userData: [],
-      firstName: ref(""),
-      lastName: ref(""),
+const profileNavItems = [
+  { key: 'my-posts', labelKey: 'nav.myPosts', route: 'my-posts', icon: 'edit_note' },
+  { key: 'liked', labelKey: 'nav.likes', route: 'liked', icon: 'favorite' },
+]
 
-      newEmail: ref(""),
-      email: ref(""),
-      nameEmail: ref(""),
-      messageBody: ref(""),
-      messageEmail: ref(""),
+function navigate(routeName) {
+  router.push({ name: routeName })
+  if ($q.screen.lt.md) leftDrawer.value = false
+}
 
-      urlImg: ref(""),
+function navigateProfile(routeName) {
+  router.push({ name: routeName })
+  if ($q.screen.lt.md) rightDrawer.value = false
+}
 
-      onDialogHide: ref(false),
-      showQuestions: ref(false),
-      showPerfil: ref(false),
-      openDialogEdit: ref(false),
-      openSendEmail: ref(false),
-      editUsername: ref(false),
+function triggerAvatarUpload() {
+  avatarInput.value?.click()
+}
 
-      errorBody: ref(false),
-    });
-    const router = useRouter();
+async function uploadAvatar(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
 
-    onBeforeMount(async () => {
-      if (!LocalStorage.getItem("token")) {
-        router.push("/");
-        return;
-      }
-      list();
-      listUser();
-    });
+  if (file.size > 3 * 1024 * 1024) {
+    $q.notify({ type: 'negative', message: t('profile.imageTooLarge') })
+    event.target.value = ''
+    return
+  }
 
-    function openFilePicker() {
-      document.getElementById("fileInput").click();
-    }
+  uploadingAvatar.value = true
+  try {
+    await authStore.updateAvatar(file)
+    $q.notify({ type: 'positive', message: t('profile.photoUpdated') })
+  } catch {
+    $q.notify({ type: 'negative', message: t('profile.photoError') })
+  } finally {
+    uploadingAvatar.value = false
+    event.target.value = ''
+  }
+}
 
-    async function listUser() {
-      let response = await getUser();
-      state.userData = response.data;
-
-      state.firstName = state.userData.first_name;
-      state.lastName = state.userData.last_name;
-    }
-
-    async function list() {
-      showLoading("Loading...");
-      try {
-        let response = await getUserPost();
-        response.data.forEach((item) => {
-          if (item.message === "") {
-            item.message = "Image";
-          }
-        });
-        state.myPosts = response.data;
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function editEmail(newEmail) {
-      showLoading("Loading...");
-      try {
-        await emailEdit({ email: newEmail });
-        listUser();
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        state.openDialogEdit = false;
-        hideLoading();
-      }
-    }
-
-    async function sendEmail() {
-      try {
-        const { email, nameEmail, messageEmail } = state;
-
-        if (!email || !nameEmail || !messageEmail) {
-          state.errorBody = true;
-          return;
-        }
-        showLoading("Loading...");
-        let data = {
-          email: email,
-          name: nameEmail,
-          message: messageEmail,
-        };
-        await emailSend(data);
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        state.openDialogEdit = false;
-        hideLoading();
-      }
-    }
-
-    async function editUsername() {
-      try {
-        const { firstName, lastName } = state;
-        if (!firstName || !lastName) {
-          state.errorBody = true;
-          return;
-        }
-
-        showLoading("Loading...");
-        await usernameEdit({
-          first_name: state.firstName,
-          last_name: state.lastName,
-        });
-        listUser();
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        state.editUsername = false;
-        hideLoading();
-      }
-    }
-
-    async function fileUpload(e) {
-      showLoading("Loading...");
-      try {
-        const selectedFile = e.target.files[0];
-
-        if (!selectedFile) {
-          return;
-        }
-        const formdata = new FormData();
-        formdata.append("image", selectedFile);
-
-        await imgEdit(formdata);
-
-        listUser();
-      } catch (error) {
-        console.warn(error);
-      } finally {
-        hideLoading();
-      }
-    }
-
-    async function sendEmail() {
-      const { email, nameEmail, messageEmail } = state;
-      if (!email || !nameEmail || !messageEmail) {
-        state.alert = true;
-        return;
-      }
-      showLoading("Sending email...");
-      let data = {
-        name: state.nameEmail,
-        email: state.email,
-        message: state.messageEmail,
-      };
-      try {
-        await emailSend(data);
-      } catch (error) {
-        console.warn(error);
-      }
-      state.openSendEmail = false;
-      hideLoading();
-    }
-
-    return {
-      state,
-      logout,
-      list,
-      editEmail,
-      sendEmail,
-      editUsername,
-      openFilePicker,
-      fileUpload,
-    };
-  },
-});
+function confirmLogout() {
+  $q.dialog({
+    title: t('logout.title'),
+    message: t('logout.message'),
+    ok: { label: t('logout.confirm'), color: 'negative', flat: true },
+    cancel: { label: t('logout.cancel'), color: 'white', flat: true },
+    dark: true,
+  }).onOk(async () => {
+    await authStore.logout()
+    router.push({ name: 'login' })
+  })
+}
 </script>
