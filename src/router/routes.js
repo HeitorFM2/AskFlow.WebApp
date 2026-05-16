@@ -1,19 +1,37 @@
 const routes = [
   {
-    path: "/",
-    component: () => import("pages/Login.vue"),
+    path: '/login',
+    name: 'login',
+    component: () => import('pages/LoginPage.vue'),
+    meta: { guest: true },
   },
   {
-    path: "/home",
-    component: () => import("layouts/MainLayout.vue"),
+    path: '/',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', redirect: { name: 'feed' } },
+      {
+        path: 'feed',
+        name: 'feed',
+        component: () => import('pages/FeedPage.vue'),
+      },
+      {
+        path: 'liked',
+        name: 'liked',
+        component: () => import('pages/LikedPage.vue'),
+      },
+      {
+        path: 'my-posts',
+        name: 'my-posts',
+        component: () => import('pages/MyPostsPage.vue'),
+      },
+    ],
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
-    path: "/:catchAll(.*)*",
-    component: () => import("pages/Error404.vue"),
+    path: '/:catchAll(.*)*',
+    component: () => import('pages/Error404.vue'),
   },
-];
+]
 
-export default routes;
+export default routes
