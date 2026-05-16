@@ -1,10 +1,8 @@
 <template>
   <router-view />
+  <LangToggle />
 </template>
-<script>
-import { defineComponent } from "vue";
 
-export default defineComponent({
-  name: "App",
-});
+<script setup>
+import LangToggle from "src/components/LangToggle.vue";
 </script>
