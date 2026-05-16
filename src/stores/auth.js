@@ -24,6 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function login(email, password) {
     const data = await AuthService.login({ email, password });
+    console.log("API URL:", process.env.VUE_APP_API);
     _persist(data);
     return data;
   }
