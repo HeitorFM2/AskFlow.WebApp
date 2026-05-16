@@ -40,7 +40,7 @@ export default {
     signUp: "Sign up",
     signIn: "Sign in",
     username: "Username",
-    identification: "Identification @",
+    identification: "Identification",
     errorIdentification: "Identification is required",
     email: "Email",
     password: "Password",
