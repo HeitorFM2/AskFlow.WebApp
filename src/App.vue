@@ -4,5 +4,5 @@
 </template>
 
 <script setup>
-import LangToggle from 'src/components/LangToggle.vue'
+import LangToggle from "src/components/LangToggle.vue";
 </script>

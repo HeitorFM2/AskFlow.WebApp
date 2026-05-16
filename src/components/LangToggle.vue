@@ -1,27 +1,23 @@
 <template>
-  <q-btn
-    round flat dense
-    class="lang-toggle"
-    @click="toggle"
-  >
-    <span class="lang-flag">{{ locale === 'pt-BR' ? '🇧🇷' : '🇺🇸' }}</span>
+  <q-btn round flat dense class="lang-toggle" @click="toggle">
+    <span class="lang-flag">{{ locale === "pt-BR" ? "🇧🇷" : "🇺🇸" }}</span>
     <q-tooltip anchor="bottom right" self="top right" :offset="[0, 6]">
-      {{ locale === 'pt-BR' ? 'Switch to English' : 'Mudar para Português' }}
+      {{ locale === "pt-BR" ? "Switch to English" : "Mudar para Português" }}
     </q-tooltip>
   </q-btn>
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
-import { i18n } from 'src/i18n'
+import { useI18n } from "vue-i18n";
+import { i18n } from "src/i18n";
 
-const { locale } = useI18n()
+const { locale } = useI18n();
 
 function toggle() {
-  const next = locale.value === 'pt-BR' ? 'en' : 'pt-BR'
-  locale.value = next
-  i18n.global.locale.value = next
-  localStorage.setItem('locale', next)
+  const next = locale.value === "pt-BR" ? "en" : "pt-BR";
+  locale.value = next;
+  i18n.global.locale.value = next;
+  localStorage.setItem("locale", next);
 }
 </script>
 

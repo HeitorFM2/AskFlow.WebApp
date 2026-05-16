@@ -2,18 +2,25 @@
   <div class="tw-comment" :class="{ 'tw-reply': isReply }">
     <!-- Avatar + connector line -->
     <div class="tw-thread-col">
-      <q-avatar :size="isReply ? '28px' : '36px'" color="primary" text-color="white" class="tw-avatar">
+      <q-avatar
+        :size="isReply ? '28px' : '36px'"
+        color="primary"
+        text-color="white"
+        class="tw-avatar"
+      >
         <img
           v-if="comment.user?.avatarUrl"
           :src="comment.user.avatarUrl"
           style="width: 100%; height: 100%; object-fit: cover"
         />
         <span v-else :style="{ fontSize: isReply ? '11px' : '13px' }">
-          {{ comment.user?.identification?.[0]?.toUpperCase() || '?' }}
+          {{ comment.user?.identification?.[0]?.toUpperCase() || "?" }}
         </span>
       </q-avatar>
       <div
-        v-if="!isReply && (showReplyInput || (showReplies && replyItems.length))"
+        v-if="
+          !isReply && (showReplyInput || (showReplies && replyItems.length))
+        "
         class="tw-connector"
       />
     </div>
@@ -22,12 +29,23 @@
     <div class="tw-content-col">
       <!-- Header: username · time · menu -->
       <div class="tw-header">
-        <span class="text-white text-weight-semibold" style="font-size: 0.87rem">{{ comment.user?.userName }}</span>
-        <span style="color: rgba(150,170,220,0.45); font-size: 0.78rem"> @{{ comment.user?.identification }}</span>
-        <span style="color: rgba(150,170,220,0.35); font-size: 0.78rem"> · {{ formatPostDate(comment.createdAt) }}</span>
+        <span
+          class="text-white text-weight-semibold"
+          style="font-size: 0.87rem"
+          >{{ comment.user?.userName }}</span
+        >
+        <span style="color: rgba(150, 170, 220, 0.45); font-size: 0.78rem">
+          @{{ comment.user?.identification }}</span
+        >
+        <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.78rem">
+          · {{ formatPostDate(comment.createdAt) }}</span
+        >
         <q-btn
           v-if="isOwner"
-          flat round dense size="xs"
+          flat
+          round
+          dense
+          size="xs"
           icon="more_horiz"
           color="grey-6"
           style="margin-left: auto"
@@ -37,7 +55,7 @@
             <q-list style="min-width: 130px">
               <q-item clickable v-close-popup dense @click="removeComment">
                 <q-item-section style="color: #ef4444; font-size: 0.85rem">
-                  {{ t('comments.delete') }}
+                  {{ t("comments.delete") }}
                 </q-item-section>
               </q-item>
             </q-list>
@@ -51,32 +69,44 @@
       <!-- Actions -->
       <div v-if="!isReply" class="tw-actions">
         <span class="tw-action" @click="showReplyInput = !showReplyInput">
-          {{ t('comments.reply') }}
+          {{ t("comments.reply") }}
         </span>
         <span
           v-if="comment.replyCount > 0"
           class="tw-action tw-action-accent"
           @click="toggleReplies"
         >
-          {{ showReplies ? t('comments.hide') : '' }}
+          {{ showReplies ? t("comments.hide") : "" }}
           {{ comment.replyCount }}
-          {{ comment.replyCount === 1 ? t('comments.replyWord') : t('comments.repliesWord') }}
+          {{
+            comment.replyCount === 1
+              ? t("comments.replyWord")
+              : t("comments.repliesWord")
+          }}
         </span>
       </div>
 
       <!-- Reply composer -->
       <div v-if="showReplyInput && !isReply" class="tw-reply-composer q-mb-xs">
-        <q-avatar size="26px" color="primary" text-color="white" style="font-size: 11px; flex-shrink: 0">
+        <q-avatar
+          size="26px"
+          color="primary"
+          text-color="white"
+          style="font-size: 11px; flex-shrink: 0"
+        >
           <img
             v-if="currentUser?.avatarUrl"
             :src="currentUser.avatarUrl"
             style="width: 100%; height: 100%; object-fit: cover"
           />
-          <span v-else>{{ currentUser?.identification?.[0]?.toUpperCase() || '?' }}</span>
+          <span v-else>{{
+            currentUser?.identification?.[0]?.toUpperCase() || "?"
+          }}</span>
         </q-avatar>
         <q-input
           v-model="replyContent"
-          dense borderless
+          dense
+          borderless
           class="col"
           :placeholder="t('comments.replyPlaceholder')"
           :maxlength="500"
@@ -86,8 +116,12 @@
         >
           <template #append>
             <q-btn
-              flat dense round icon="send"
-              color="accent" size="sm"
+              flat
+              dense
+              round
+              icon="send"
+              color="accent"
+              size="sm"
               :loading="replyLoading"
               :disable="!replyContent.trim()"
               @click="submitReply"
@@ -115,79 +149,84 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useAuthStore } from 'src/stores/auth'
-import { useCommentsStore } from 'src/stores/comments'
-import { useI18n } from 'vue-i18n'
-import { Notify } from 'quasar'
-import { formatPostDate } from 'src/util/date'
+import { ref, computed } from "vue";
+import { useAuthStore } from "src/stores/auth";
+import { useCommentsStore } from "src/stores/comments";
+import { useI18n } from "vue-i18n";
+import { Notify } from "quasar";
+import { formatPostDate } from "src/util/date";
 
 const props = defineProps({
   comment: { type: Object, required: true },
   postId: { type: Number, required: true },
   isReply: { type: Boolean, default: false },
-})
+});
 
-const emit = defineEmits(['deleted'])
+const emit = defineEmits(["deleted"]);
 
-const authStore = useAuthStore()
-const commentsStore = useCommentsStore()
-const { t } = useI18n()
+const authStore = useAuthStore();
+const commentsStore = useCommentsStore();
+const { t } = useI18n();
 
-const showReplies = ref(false)
-const showReplyInput = ref(false)
-const replyContent = ref('')
-const replyLoading = ref(false)
-const repliesLoading = ref(false)
-const replyItems = ref([])
+const showReplies = ref(false);
+const showReplyInput = ref(false);
+const replyContent = ref("");
+const replyLoading = ref(false);
+const repliesLoading = ref(false);
+const replyItems = ref([]);
 
-const currentUser = computed(() => authStore.user)
-const isOwner = computed(() =>
-  !!authStore.user?.identification &&
-  authStore.user.identification === props.comment.user?.identification
-)
+const currentUser = computed(() => authStore.user);
+const isOwner = computed(
+  () =>
+    !!authStore.user?.identification &&
+    authStore.user.identification === props.comment.user?.identification
+);
 
 async function toggleReplies() {
-  showReplies.value = !showReplies.value
+  showReplies.value = !showReplies.value;
   if (showReplies.value && replyItems.value.length === 0) {
-    repliesLoading.value = true
+    repliesLoading.value = true;
     try {
-      const result = await commentsStore.fetchReplies(props.comment.id)
-      replyItems.value = result.items
+      const result = await commentsStore.fetchReplies(props.comment.id);
+      replyItems.value = result.items;
     } finally {
-      repliesLoading.value = false
+      repliesLoading.value = false;
     }
   }
 }
 
 async function submitReply() {
-  if (!replyContent.value.trim()) return
-  replyLoading.value = true
+  if (!replyContent.value.trim()) return;
+  replyLoading.value = true;
   try {
-    await commentsStore.addReply(props.postId, props.comment.id, replyContent.value.trim())
-    replyContent.value = ''
-    showReplyInput.value = false
-    repliesLoading.value = true
+    await commentsStore.addReply(
+      props.postId,
+      props.comment.id,
+      replyContent.value.trim()
+    );
+    replyContent.value = "";
+    showReplyInput.value = false;
+    repliesLoading.value = true;
     try {
-      const result = await commentsStore.fetchReplies(props.comment.id)
-      replyItems.value = result.items
-      showReplies.value = true
+      const result = await commentsStore.fetchReplies(props.comment.id);
+      replyItems.value = result.items;
+      showReplies.value = true;
     } finally {
-      repliesLoading.value = false
+      repliesLoading.value = false;
     }
   } catch {
-    Notify.create({ type: 'negative', message: t('comments.replyError') })
+    Notify.create({ type: "negative", message: t("comments.replyError") });
   } finally {
-    replyLoading.value = false
+    replyLoading.value = false;
   }
 }
 
 async function removeComment() {
   try {
-    await commentsStore.removeComment(props.postId, props.comment.id)
-    emit('deleted')
+    await commentsStore.removeComment(props.postId, props.comment.id);
+    emit("deleted");
   } catch {
-    Notify.create({ type: 'negative', message: t('comments.deleteError') })
+    Notify.create({ type: "negative", message: t("comments.deleteError") });
   }
 }
 </script>

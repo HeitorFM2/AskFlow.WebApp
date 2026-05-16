@@ -2,20 +2,36 @@
   <div>
     <!-- Composer -->
     <div class="tw-composer q-mb-md">
-      <div class="tw-thread-col" style="width: 36px; flex-shrink: 0; display: flex; justify-content: center">
-        <q-avatar size="36px" color="primary" text-color="white" style="font-size: 13px">
+      <div
+        class="tw-thread-col"
+        style="
+          width: 36px;
+          flex-shrink: 0;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <q-avatar
+          size="36px"
+          color="primary"
+          text-color="white"
+          style="font-size: 13px"
+        >
           <img
             v-if="currentUser?.avatarUrl"
             :src="currentUser.avatarUrl"
             style="width: 100%; height: 100%; object-fit: cover"
           />
-          <span v-else>{{ currentUser?.identification?.[0]?.toUpperCase() || '?' }}</span>
+          <span v-else>{{
+            currentUser?.identification?.[0]?.toUpperCase() || "?"
+          }}</span>
         </q-avatar>
       </div>
       <div style="flex: 1; min-width: 0">
         <q-input
           v-model="newComment"
-          dense borderless
+          dense
+          borderless
           :placeholder="$t('comments.placeholder')"
           :maxlength="500"
           :input-style="{ color: '#dde4f0', fontSize: '0.88rem' }"
@@ -23,15 +39,25 @@
         >
           <template #append>
             <q-btn
-              flat dense round icon="send"
-              color="accent" size="sm"
+              flat
+              dense
+              round
+              icon="send"
+              color="accent"
+              size="sm"
               :loading="posting"
               :disable="!newComment.trim()"
               @click="submitComment"
             />
           </template>
         </q-input>
-        <div style="height: 1px; background: rgba(79,134,247,0.18); margin-top: 2px" />
+        <div
+          style="
+            height: 1px;
+            background: rgba(79, 134, 247, 0.18);
+            margin-top: 2px;
+          "
+        />
       </div>
     </div>
 
@@ -44,9 +70,9 @@
     <p
       v-if="!loading && !comments.length"
       class="text-center q-py-lg"
-      style="color: rgba(150,170,220,0.4); font-size: 0.88rem"
+      style="color: rgba(150, 170, 220, 0.4); font-size: 0.88rem"
     >
-      {{ $t('comments.empty') }}
+      {{ $t("comments.empty") }}
     </p>
 
     <!-- Comments -->
@@ -61,7 +87,8 @@
     <!-- Load more -->
     <div v-if="hasNextPage" class="flex flex-center q-pt-sm">
       <q-btn
-        flat dense
+        flat
+        dense
         color="accent"
         :label="$t('comments.loadMore')"
         :loading="loading"
@@ -73,53 +100,55 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from 'src/stores/auth'
-import { useCommentsStore } from 'src/stores/comments'
-import { useI18n } from 'vue-i18n'
-import { Notify } from 'quasar'
-import CommentItem from './CommentItem.vue'
+import { ref, computed, onMounted } from "vue";
+import { useAuthStore } from "src/stores/auth";
+import { useCommentsStore } from "src/stores/comments";
+import { useI18n } from "vue-i18n";
+import { Notify } from "quasar";
+import CommentItem from "./CommentItem.vue";
 
 const props = defineProps({
   postId: { type: Number, required: true },
-})
+});
 
-const authStore = useAuthStore()
-const commentsStore = useCommentsStore()
-const { t } = useI18n()
+const authStore = useAuthStore();
+const commentsStore = useCommentsStore();
+const { t } = useI18n();
 
-const newComment = ref('')
-const posting = ref(false)
-const page = ref(1)
+const newComment = ref("");
+const posting = ref(false);
+const page = ref(1);
 
-const currentUser = computed(() => authStore.user)
-const loading = computed(() => commentsStore.loading)
-const postComments = computed(() => commentsStore.getPostComments(props.postId))
-const comments = computed(() => postComments.value.items)
-const hasNextPage = computed(() => postComments.value.hasNextPage)
+const currentUser = computed(() => authStore.user);
+const loading = computed(() => commentsStore.loading);
+const postComments = computed(() =>
+  commentsStore.getPostComments(props.postId)
+);
+const comments = computed(() => postComments.value.items);
+const hasNextPage = computed(() => postComments.value.hasNextPage);
 
-onMounted(reload)
+onMounted(reload);
 
 async function reload() {
-  page.value = 1
-  await commentsStore.fetchByPost(props.postId, 1)
+  page.value = 1;
+  await commentsStore.fetchByPost(props.postId, 1);
 }
 
 async function loadMore() {
-  page.value++
-  await commentsStore.fetchByPost(props.postId, page.value)
+  page.value++;
+  await commentsStore.fetchByPost(props.postId, page.value);
 }
 
 async function submitComment() {
-  if (!newComment.value.trim()) return
-  posting.value = true
+  if (!newComment.value.trim()) return;
+  posting.value = true;
   try {
-    await commentsStore.addComment(props.postId, newComment.value.trim())
-    newComment.value = ''
+    await commentsStore.addComment(props.postId, newComment.value.trim());
+    newComment.value = "";
   } catch {
-    Notify.create({ type: 'negative', message: t('comments.error') })
+    Notify.create({ type: "negative", message: t("comments.error") });
   } finally {
-    posting.value = false
+    posting.value = false;
   }
 }
 </script>

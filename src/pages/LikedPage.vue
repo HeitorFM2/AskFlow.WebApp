@@ -3,7 +3,7 @@
     <div class="feed-container">
       <p class="page-section-title q-mb-md">
         <q-icon name="favorite" color="negative" size="20px" class="q-mr-sm" />
-        {{ $t('liked.title') }}
+        {{ $t("liked.title") }}
       </p>
 
       <PostSkeleton v-if="likesStore.loading && !likesStore.items.length" />
@@ -17,7 +17,10 @@
         @unliked="likesStore.removeItem($event)"
       />
 
-      <div v-if="likesStore.pagination.hasNextPage" class="flex flex-center q-py-md">
+      <div
+        v-if="likesStore.pagination.hasNextPage"
+        class="flex flex-center q-py-md"
+      >
         <q-btn
           outline
           color="accent"
@@ -30,10 +33,10 @@
       <div
         v-if="!likesStore.loading && !likesStore.items.length"
         class="flex flex-center column q-py-xl"
-        style="color: rgba(150,170,220,0.4)"
+        style="color: rgba(150, 170, 220, 0.4)"
       >
         <q-icon name="favorite_border" size="56px" />
-        <p class="q-mt-md text-body2">{{ $t('liked.empty') }}</p>
+        <p class="q-mt-md text-body2">{{ $t("liked.empty") }}</p>
       </div>
     </div>
 
@@ -42,21 +45,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useLikesStore } from 'src/stores/likes'
-import PostCard from 'src/components/PostCard.vue'
-import PostDetail from 'src/components/PostDetail.vue'
-import PostSkeleton from 'src/components/PostSkeleton.vue'
+import { ref, onMounted } from "vue";
+import { useLikesStore } from "src/stores/likes";
+import PostCard from "src/components/PostCard.vue";
+import PostDetail from "src/components/PostDetail.vue";
+import PostSkeleton from "src/components/PostSkeleton.vue";
 
-const likesStore = useLikesStore()
+const likesStore = useLikesStore();
 
-const detailOpen = ref(false)
-const selectedPostId = ref(null)
+const detailOpen = ref(false);
+const selectedPostId = ref(null);
 
-onMounted(() => likesStore.fetchLikedPosts())
+onMounted(() => likesStore.fetchLikedPosts());
 
 function openPost(post) {
-  selectedPostId.value = post.id
-  detailOpen.value = true
+  selectedPostId.value = post.id;
+  detailOpen.value = true;
 }
 </script>

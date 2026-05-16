@@ -19,5 +19,5 @@
 <script setup>
 defineProps({
   count: { type: Number, default: 3 },
-})
+});
 </script>

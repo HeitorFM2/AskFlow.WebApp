@@ -1,4 +1,4 @@
-import { api } from 'src/boot/axios'
+import { api } from "src/boot/axios";
 
 export const CommentsService = {
   getByPost: (postId, page = 1, pageSize = 20) =>
@@ -8,7 +8,9 @@ export const CommentsService = {
 
   getReplies: (commentId, page = 1, pageSize = 20) =>
     api
-      .get(`/api/v2/Comments/${commentId}/Replies`, { params: { page, pageSize } })
+      .get(`/api/v2/Comments/${commentId}/Replies`, {
+        params: { page, pageSize },
+      })
       .then((r) => r.data),
 
   create: (postId, payload) =>
@@ -16,4 +18,4 @@ export const CommentsService = {
 
   delete: (commentId) =>
     api.delete(`/api/v2/Comments/${commentId}`).then((r) => r.data),
-}
+};
