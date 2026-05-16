@@ -138,7 +138,7 @@ function confirmDelete() {
       await postsStore.deletePost(props.post.id);
       emit("deleted", props.post.id);
       $q.notify({ type: "positive", message: t("post.deleted") });
-    } catch {
+    } catch (_) {
       $q.notify({ type: "negative", message: t("post.deleteError") });
     }
   });

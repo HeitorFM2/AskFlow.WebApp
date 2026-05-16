@@ -11,7 +11,7 @@ function loadUser() {
   try {
     const raw = localStorage.getItem(KEY_USER);
     return raw ? JSON.parse(raw) : null;
-  } catch {
+  } catch (_) {
     return null;
   }
 }
@@ -29,20 +29,13 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function register(email, password, userName, identification) {
-    const data = await AuthService.register({
-      email,
-      password,
-      userName,
-      identification,
-    });
-    _persist(data);
-    return data;
+    await AuthService.register({ email, password, userName, identification });
   }
 
   async function logout() {
     try {
       if (accessToken.value) await AuthService.logout();
-    } catch {
+    } catch (_) {
       // logout locally even if API call fails
     } finally {
       _clear();

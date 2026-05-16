@@ -145,7 +145,7 @@ async function submitComment() {
   try {
     await commentsStore.addComment(props.postId, newComment.value.trim());
     newComment.value = "";
-  } catch {
+  } catch (_) {
     Notify.create({ type: "negative", message: t("comments.error") });
   } finally {
     posting.value = false;

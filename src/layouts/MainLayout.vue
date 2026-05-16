@@ -276,7 +276,7 @@ async function uploadAvatar(event) {
   try {
     await authStore.updateAvatar(file);
     $q.notify({ type: "positive", message: t("profile.photoUpdated") });
-  } catch {
+  } catch (_) {
     $q.notify({ type: "negative", message: t("profile.photoError") });
   } finally {
     uploadingAvatar.value = false;
