@@ -6,9 +6,6 @@ on:
       - main
       - develop
       - 'release/**'
-      - 'refactor/**'
-      - 'feat/**'
-      - 'fix/**'
   pull_request:
     branches:
       - main
