@@ -189,7 +189,7 @@ function confirmDelete() {
       emit("deleted", props.postId);
       show.value = false;
       $q.notify({ type: "positive", message: t("post.deleted") });
-    } catch {
+    } catch (_) {
       $q.notify({ type: "negative", message: t("post.deleteError") });
     }
   });
@@ -202,7 +202,7 @@ async function like() {
   localLikes.value += was ? -1 : 1;
   try {
     await LikesService.toggle(props.postId);
-  } catch {
+  } catch (_) {
     localLiked.value = was;
     localLikes.value += was ? 1 : -1;
   } finally {

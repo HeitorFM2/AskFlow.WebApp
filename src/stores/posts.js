@@ -65,7 +65,7 @@ export const usePostsStore = defineStore("posts", () => {
 
     try {
       await LikesService.toggle(postId);
-    } catch {
+    } catch (_) {
       post.isLiked = wasLiked;
       post.likes += wasLiked ? 1 : -1;
     }

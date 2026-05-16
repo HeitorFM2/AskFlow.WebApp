@@ -214,7 +214,7 @@ async function submitReply() {
     } finally {
       repliesLoading.value = false;
     }
-  } catch {
+  } catch (_) {
     Notify.create({ type: "negative", message: t("comments.replyError") });
   } finally {
     replyLoading.value = false;
@@ -225,7 +225,7 @@ async function removeComment() {
   try {
     await commentsStore.removeComment(props.postId, props.comment.id);
     emit("deleted");
-  } catch {
+  } catch (_) {
     Notify.create({ type: "negative", message: t("comments.deleteError") });
   }
 }
