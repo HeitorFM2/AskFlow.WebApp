@@ -23,7 +23,6 @@ export const useAuthStore = defineStore("auth", () => {
   const isAuthenticated = computed(() => !!accessToken.value);
 
   async function login(email, password) {
-    console.log("API URL:", process.env.VUE_APP_API);
     const data = await AuthService.login({ email, password });
     _persist(data);
     return data;
