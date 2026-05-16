@@ -6,6 +6,7 @@
   "author": "HeitorFM <101652747+HeitorFM2@users.noreply.github.com>",
   "private": true,
   "scripts": {
+    "build": "quasar build",
     "lint": "eslint --ext .js,.vue ./",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "format:check": "prettier --check \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
