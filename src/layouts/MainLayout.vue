@@ -4,7 +4,10 @@
     <div
       class="mobile-topbar flex justify-between items-center q-pa-sm q-px-md lt-md"
     >
-      <span class="nav-brand" style="font-size: 1.1rem"
+      <span
+        class="nav-brand"
+        style="font-size: 1.1rem; cursor: pointer"
+        @click="navigate('feed')"
         >&lt; AskFlow /&gt;</span
       >
       <div class="flex q-gutter-x-xs">
@@ -36,7 +39,11 @@
     >
       <q-scroll-area class="fit">
         <div class="q-px-md q-pt-xl q-pb-lg">
-          <div class="nav-brand" style="font-size: 1.15rem">
+          <div
+            class="nav-brand"
+            style="font-size: 1.15rem; cursor: pointer"
+            @click="navigate('feed')"
+          >
             &lt; AskFlow /&gt;
           </div>
         </div>

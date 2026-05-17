@@ -2,31 +2,16 @@
   <div>
     <!-- Composer -->
     <div class="tw-composer q-mb-md">
-      <div
-        class="tw-thread-col"
-        style="
-          width: 36px;
-          flex-shrink: 0;
-          display: flex;
-          justify-content: center;
-        "
-      >
-        <q-avatar
-          size="36px"
-          color="primary"
-          text-color="white"
-          style="font-size: 13px"
-        >
-          <img
-            v-if="currentUser?.avatarUrl"
-            :src="currentUser.avatarUrl"
-            style="width: 100%; height: 100%; object-fit: cover"
-          />
-          <span v-else>{{
-            currentUser?.identification?.[0]?.toUpperCase() || "?"
-          }}</span>
-        </q-avatar>
-      </div>
+      <q-avatar color="primary" text-color="white" style="flex-shrink: 0">
+        <img
+          v-if="currentUser?.avatarUrl"
+          :src="currentUser.avatarUrl"
+          style="width: 100%; height: 100%; object-fit: cover"
+        />
+        <span v-else>{{
+          currentUser?.identification?.[0]?.toUpperCase() || "?"
+        }}</span>
+      </q-avatar>
       <div style="flex: 1; min-width: 0">
         <q-input
           v-model="newComment"
@@ -156,8 +141,8 @@ async function submitComment() {
 <style scoped>
 .tw-composer {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(79, 134, 247, 0.12);
 }
