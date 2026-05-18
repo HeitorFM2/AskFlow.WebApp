@@ -1,8 +1,8 @@
 <template>
   <q-card class="post-card q-mb-sm cursor-pointer" @click="emit('open', post)">
     <q-item class="q-pt-md q-pb-xs">
-      <q-item-section avatar>
-        <q-avatar color="primary" text-color="white">
+      <q-item-section avatar @click.stop="goToUser(post.user?.userName)">
+        <q-avatar color="primary" text-color="white" class="cursor-pointer">
           <img
             v-if="post.user?.avatarUrl"
             :src="post.user.avatarUrl"
@@ -16,11 +16,15 @@
 
       <q-item-section>
         <q-item-label style="font-size: 0.9rem; line-height: 1.3">
-          <span class="text-white text-weight-semibold">{{
-            post.user?.userName
-          }}</span>
-          <span style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem">
-            @{{ post.user?.identification }}</span
+          <span
+            class="text-white text-weight-semibold cursor-pointer"
+            @click.stop="goToUser(post.user?.userName)"
+          >{{ post.user?.identification }}</span>
+          <span
+            style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
+            class="cursor-pointer"
+            @click.stop="goToUser(post.user?.userName)"
+          > @{{ post.user?.userName }}</span
           >
           <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.8rem">
             · {{ formatPostDate(post.createdAt) }}</span
@@ -28,31 +32,35 @@
         </q-item-label>
       </q-item-section>
 
-      <q-item-section side>
+      <q-item-section v-if="!isOwner && !hideFollow" side>
+        <q-btn
+          :outline="!localIsFollowing"
+          :unelevated="localIsFollowing"
+          color="accent"
+          :label="
+            localIsFollowing ? $t('follows.following') : $t('follows.follow')
+          "
+          dense
+          size="xs"
+          style="font-size: 0.7rem; min-width: 60px"
+          :loading="following"
+          @click.stop="toggleFollow"
+        />
+      </q-item-section>
+
+      <q-item-section v-if="isOwner" side>
         <q-btn
           flat
           round
           dense
           size="sm"
-          icon="more_vert"
-          color="grey-5"
-          @click.stop
+          icon="delete_outline"
+          color="negative"
+          @click.stop="confirmDelete"
         >
-          <q-menu anchor="bottom right" self="top right" dark>
-            <q-list style="min-width: 140px">
-              <q-item
-                v-if="isOwner"
-                clickable
-                v-close-popup
-                dense
-                @click.stop="confirmDelete"
-              >
-                <q-item-section style="color: #ef4444; font-size: 0.85rem">
-                  {{ t("post.deleteTooltip") }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 4]">
+            {{ t("post.deleteTooltip") }}
+          </q-tooltip>
         </q-btn>
       </q-item-section>
     </q-item>
@@ -90,30 +98,54 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { usePostsStore } from "src/stores/posts";
+import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { formatPostDate } from "src/util/date";
 
 const props = defineProps({
   post: { type: Object, required: true },
+  hideFollow: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["open", "deleted", "unliked"]);
 
+const router = useRouter();
 const $q = useQuasar();
 const authStore = useAuthStore();
 const postsStore = usePostsStore();
+const followsStore = useFollowsStore();
 const { t } = useI18n();
 
+function goToUser(userName) {
+  if (userName) router.push({ name: "user-posts", params: { userName } });
+}
+
 const liking = ref(false);
+const following = ref(false);
+const localIsFollowing = ref(props.post.user?.isFollowing ?? false);
 
 const isOwner = computed(
   () =>
-    !!authStore.user?.identification &&
-    authStore.user.identification === props.post.user?.identification
+    !!authStore.user?.userName &&
+    authStore.user.userName === props.post.user?.userName
 );
+
+async function toggleFollow() {
+  const prev = localIsFollowing.value;
+  localIsFollowing.value = !prev;
+  following.value = true;
+  try {
+    await followsStore.toggleFollow(props.post.user.id, props.post.user.userName, prev);
+  } catch (_) {
+    localIsFollowing.value = prev;
+  } finally {
+    following.value = false;
+  }
+}
 
 async function like() {
   const wasLiked = props.post.isLiked;
