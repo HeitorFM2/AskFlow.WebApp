@@ -26,6 +26,21 @@ const routes = [
         name: "my-posts",
         component: () => import("pages/MyPostsPage.vue"),
       },
+      {
+        path: "users/:userName",
+        name: "user-posts",
+        component: () => import("pages/UserPostsPage.vue"),
+      },
+      {
+        path: "followers",
+        name: "followers",
+        component: () => import("pages/FollowListPage.vue"),
+      },
+      {
+        path: "following",
+        name: "following",
+        component: () => import("pages/FollowListPage.vue"),
+      },
     ],
   },
   {
