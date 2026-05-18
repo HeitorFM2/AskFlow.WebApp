@@ -28,8 +28,8 @@
       <template v-else-if="post">
         <!-- Author -->
         <q-item class="q-pa-none q-mb-md">
-          <q-item-section avatar>
-            <q-avatar color="primary" text-color="white">
+          <q-item-section avatar @click="goToUser(post.user?.userName)">
+            <q-avatar color="primary" text-color="white" class="cursor-pointer">
               <img
                 v-if="post.user?.avatarUrl"
                 :src="post.user.avatarUrl"
@@ -42,11 +42,15 @@
           </q-item-section>
           <q-item-section>
             <q-item-label style="font-size: 0.9rem; line-height: 1.3">
-              <span class="text-white text-weight-semibold">{{
-                post.user?.userName
-              }}</span>
-              <span style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem">
-                @{{ post.user?.identification }}</span
+              <span
+                class="text-white text-weight-semibold cursor-pointer"
+                @click="goToUser(post.user?.userName)"
+              >{{ post.user?.identification }}</span>
+              <span
+                style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
+                class="cursor-pointer"
+                @click="goToUser(post.user?.userName)"
+              > @{{ post.user?.userName }}</span
               >
               <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.8rem">
                 · {{ formatPostDate(post.createdAt) }}</span
@@ -121,6 +125,7 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import { usePostsStore } from "src/stores/posts";
 import { useAuthStore } from "src/stores/auth";
 import { useQuasar } from "quasar";
@@ -136,15 +141,22 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", "deleted"]);
 
+const router = useRouter();
 const postsStore = usePostsStore();
+
+function goToUser(userName) {
+  if (!userName) return;
+  show.value = false;
+  router.push({ name: "user-posts", params: { userName } });
+}
 const authStore = useAuthStore();
 const $q = useQuasar();
 const { t } = useI18n();
 
 const isOwner = computed(
   () =>
-    !!authStore.user?.identification &&
-    authStore.user.identification === post.value?.user?.identification
+    !!authStore.user?.userName &&
+    authStore.user.userName === post.value?.user?.userName
 );
 
 const liking = ref(false);
