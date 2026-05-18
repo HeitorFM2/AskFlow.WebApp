@@ -3,6 +3,9 @@ import { api } from "src/boot/axios";
 export const UsersService = {
   getMe: () => api.get("/api/v2/users/Me").then((r) => r.data),
 
+  getAll: (search = "") =>
+    api.get("/api/v2/Users", { params: { search } }).then((r) => r.data),
+
   updateAvatar: (file) => {
     const form = new FormData();
     form.append("file", file);
