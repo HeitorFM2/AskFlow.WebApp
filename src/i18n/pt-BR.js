@@ -22,6 +22,8 @@ export default {
     title: "Feed",
     loadMore: "Carregar mais",
     empty: "Nenhum post ainda. Seja o primeiro a postar!",
+    searchUsers: "Buscar usuários…",
+    noUsersFound: "Nenhum usuário encontrado.",
   },
   liked: {
     title: "Posts curtidos",
@@ -102,5 +104,20 @@ export default {
   },
   lang: {
     switch: "Idioma",
+  },
+  userPosts: {
+    loadMore: "Carregar mais",
+    empty: "Este usuário ainda não publicou nada.",
+  },
+  follows: {
+    followers: "Seguidores",
+    following: "Seguindo",
+    follow: "Seguir",
+    followersTitle: "Seguidores",
+    followingTitle: "Seguindo",
+    loadMore: "Carregar mais",
+    emptyFollowers: "Nenhum seguidor ainda.",
+    emptyFollowing: "Você não está seguindo ninguém ainda.",
+    searchPlaceholder: "Buscar usuário…",
   },
 };
