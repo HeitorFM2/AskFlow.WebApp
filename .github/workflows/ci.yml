@@ -16,7 +16,7 @@ concurrency:
 jobs:
   validate-branch:
     name: Validate branch name
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop'
     runs-on: ubuntu-latest
     steps:
       - name: Check naming convention
