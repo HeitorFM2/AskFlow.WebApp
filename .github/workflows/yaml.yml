@@ -6,12 +6,17 @@ on:
       - "release/**"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   APP_NAME: askflow-webapp
 
 jobs:
   build:
     name: Build & package
+    if: startsWith(github.ref, 'refs/heads/release/')
     runs-on: ubuntu-latest
 
     steps:
@@ -42,11 +47,20 @@ jobs:
           name: app
           path: dist/spa
 
-  deploy:
-    name: Deploy to production
+  approval:
+    name: Await approval
     needs: build
     runs-on: ubuntu-latest
     environment: production
+
+    steps:
+      - name: Approved
+        run: echo "Deployment approved by ${{ github.actor }}"
+
+  deploy:
+    name: Deploy to production
+    needs: approval
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/download-artifact@v4
