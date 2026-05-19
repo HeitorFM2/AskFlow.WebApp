@@ -19,12 +19,14 @@
           <span
             class="text-white text-weight-semibold cursor-pointer"
             @click.stop="goToUser(post.user?.userName)"
-          >{{ post.user?.identification }}</span>
+            >{{ post.user?.identification }}</span
+          >
           <span
             style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
             class="cursor-pointer"
             @click.stop="goToUser(post.user?.userName)"
-          > @{{ post.user?.userName }}</span
+          >
+            @{{ post.user?.userName }}</span
           >
           <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.8rem">
             · {{ formatPostDate(post.createdAt) }}</span
@@ -139,7 +141,11 @@ async function toggleFollow() {
   localIsFollowing.value = !prev;
   following.value = true;
   try {
-    await followsStore.toggleFollow(props.post.user.id, props.post.user.userName, prev);
+    await followsStore.toggleFollow(
+      props.post.user.id,
+      props.post.user.userName,
+      prev
+    );
   } catch (_) {
     localIsFollowing.value = prev;
   } finally {

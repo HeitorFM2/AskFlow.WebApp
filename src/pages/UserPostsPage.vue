@@ -1,7 +1,6 @@
 <template>
   <q-page class="q-pa-md">
     <div class="feed-container">
-
       <!-- Back -->
       <q-btn
         flat
@@ -13,7 +12,10 @@
       />
 
       <!-- User header skeleton -->
-      <div v-if="store.loading && !store.profileUser" class="flex items-center q-mb-lg q-px-sm">
+      <div
+        v-if="store.loading && !store.profileUser"
+        class="flex items-center q-mb-lg q-px-sm"
+      >
         <q-skeleton type="QAvatar" size="56px" class="q-mr-md" />
         <div class="col">
           <q-skeleton type="text" width="40%" class="q-mb-xs" />
@@ -22,8 +24,16 @@
       </div>
 
       <!-- User header -->
-      <div v-else-if="store.profileUser" class="flex items-center q-mb-lg q-px-sm">
-        <q-avatar size="56px" color="primary" text-color="white" class="q-mr-md">
+      <div
+        v-else-if="store.profileUser"
+        class="flex items-center q-mb-lg q-px-sm"
+      >
+        <q-avatar
+          size="56px"
+          color="primary"
+          text-color="white"
+          class="q-mr-md"
+        >
           <img
             v-if="store.profileUser.avatarUrl"
             :src="store.profileUser.avatarUrl"
@@ -46,7 +56,9 @@
           :outline="!localIsFollowing"
           :unelevated="localIsFollowing"
           color="accent"
-          :label="localIsFollowing ? $t('follows.following') : $t('follows.follow')"
+          :label="
+            localIsFollowing ? $t('follows.following') : $t('follows.follow')
+          "
           size="md"
           class="q-px-lg"
           style="font-weight: 600; border-radius: 20px"
@@ -55,7 +67,10 @@
         />
       </div>
 
-      <q-separator style="background: rgba(79, 134, 247, 0.1)" class="q-mb-md" />
+      <q-separator
+        style="background: rgba(79, 134, 247, 0.1)"
+        class="q-mb-md"
+      />
 
       <!-- Post skeletons -->
       <PostSkeleton v-if="store.loading && !store.items.length" />
@@ -91,10 +106,7 @@
       </div>
     </div>
 
-    <PostDetail
-      v-model="detailOpen"
-      :post-id="selectedPostId"
-    />
+    <PostDetail v-model="detailOpen" :post-id="selectedPostId" />
   </q-page>
 </template>
 

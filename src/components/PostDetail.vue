@@ -45,12 +45,14 @@
               <span
                 class="text-white text-weight-semibold cursor-pointer"
                 @click="goToUser(post.user?.userName)"
-              >{{ post.user?.identification }}</span>
+                >{{ post.user?.identification }}</span
+              >
               <span
                 style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
                 class="cursor-pointer"
                 @click="goToUser(post.user?.userName)"
-              > @{{ post.user?.userName }}</span
+              >
+                @{{ post.user?.userName }}</span
               >
               <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.8rem">
                 · {{ formatPostDate(post.createdAt) }}</span

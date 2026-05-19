@@ -40,7 +40,8 @@
           style="color: rgba(150, 170, 220, 0.45); font-size: 0.78rem"
           class="cursor-pointer"
           @click="goToUser(comment.user?.userName)"
-        > @{{ comment.user?.userName }}</span
+        >
+          @{{ comment.user?.userName }}</span
         >
         <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.78rem">
           · {{ formatPostDate(comment.createdAt) }}</span

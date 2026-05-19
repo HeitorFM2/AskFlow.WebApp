@@ -37,7 +37,11 @@ export const useFollowsStore = defineStore("follows", () => {
   const userResults = ref([]);
   const userResultsLoading = ref(false);
 
-  async function fetchFollowers(page = 1, pageSize = 20, search = followersSearch.value) {
+  async function fetchFollowers(
+    page = 1,
+    pageSize = 20,
+    search = followersSearch.value
+  ) {
     followersSearch.value = search;
     followersLoading.value = true;
     try {
@@ -51,7 +55,11 @@ export const useFollowsStore = defineStore("follows", () => {
     }
   }
 
-  async function fetchFollowing(page = 1, pageSize = 20, search = followingSearch.value) {
+  async function fetchFollowing(
+    page = 1,
+    pageSize = 20,
+    search = followingSearch.value
+  ) {
     followingSearch.value = search;
     followingLoading.value = true;
     try {
