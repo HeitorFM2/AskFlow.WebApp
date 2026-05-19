@@ -39,13 +39,14 @@
           </p>
 
           <q-form
+            ref="formRef"
             @submit.prevent="submit"
             class="flex flex-center column"
             style="gap: 14px"
           >
             <q-input
               v-if="!isLogin"
-              v-model="userName"
+              v-model="identification"
               rounded
               standout
               class="full-width"
@@ -59,7 +60,7 @@
 
             <q-input
               v-if="!isLogin"
-              v-model="identification"
+              v-model="userName"
               rounded
               standout
               class="full-width"
@@ -191,7 +192,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { useI18n } from "vue-i18n";
@@ -201,6 +202,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const { t } = useI18n();
 
+const formRef = ref(null);
 const isLogin = ref(true);
 const email = ref("");
 const password = ref("");
@@ -212,7 +214,7 @@ const showConfirmPassword = ref(false);
 const loading = ref(false);
 const errorMsg = ref("");
 
-function switchMode(toLogin) {
+async function switchMode(toLogin) {
   isLogin.value = toLogin;
   errorMsg.value = "";
   confirmPassword.value = "";
@@ -220,6 +222,8 @@ function switchMode(toLogin) {
   email.value = "";
   userName.value = "";
   identification.value = "";
+  await nextTick();
+  formRef.value?.resetValidation();
 }
 
 async function submit() {

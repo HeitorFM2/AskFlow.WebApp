@@ -22,6 +22,8 @@ export default {
     title: "Feed",
     loadMore: "Load more",
     empty: "No posts yet. Be the first to post!",
+    searchUsers: "Search users…",
+    noUsersFound: "No users found.",
   },
   liked: {
     title: "Liked posts",
@@ -102,5 +104,20 @@ export default {
   },
   lang: {
     switch: "Language",
+  },
+  userPosts: {
+    loadMore: "Load more",
+    empty: "This user hasn't posted anything yet.",
+  },
+  follows: {
+    followers: "Followers",
+    following: "Following",
+    follow: "Follow",
+    followersTitle: "Followers",
+    followingTitle: "Following",
+    loadMore: "Load more",
+    emptyFollowers: "No followers yet.",
+    emptyFollowing: "You're not following anyone yet.",
+    searchPlaceholder: "Search user…",
   },
 };

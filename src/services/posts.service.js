@@ -17,4 +17,13 @@ export const PostsService = {
     api
       .get("/api/v2/Posts/Me", { params: { page, pageSize } })
       .then((r) => r.data),
+
+  getByUserName: (targetUserName, page = 1, pageSize = 20) =>
+    api
+      .post(
+        "/api/v2/Posts/ByUserName",
+        { targetUserName },
+        { params: { page, pageSize } }
+      )
+      .then((r) => r.data),
 };

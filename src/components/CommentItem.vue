@@ -6,7 +6,8 @@
         :size="isReply ? '28px' : '36px'"
         color="primary"
         text-color="white"
-        class="tw-avatar"
+        class="tw-avatar cursor-pointer"
+        @click="goToUser(comment.user?.userName)"
       >
         <img
           v-if="comment.user?.avatarUrl"
@@ -30,12 +31,17 @@
       <!-- Header: username · time · menu -->
       <div class="tw-header">
         <span
-          class="text-white text-weight-semibold"
+          class="text-white text-weight-semibold cursor-pointer"
           style="font-size: 0.87rem"
-          >{{ comment.user?.userName }}</span
+          @click="goToUser(comment.user?.userName)"
+          >{{ comment.user?.identification }}</span
         >
-        <span style="color: rgba(150, 170, 220, 0.45); font-size: 0.78rem">
-          @{{ comment.user?.identification }}</span
+        <span
+          style="color: rgba(150, 170, 220, 0.45); font-size: 0.78rem"
+          class="cursor-pointer"
+          @click="goToUser(comment.user?.userName)"
+        >
+          @{{ comment.user?.userName }}</span
         >
         <span style="color: rgba(150, 170, 220, 0.35); font-size: 0.78rem">
           · {{ formatPostDate(comment.createdAt) }}</span
@@ -150,6 +156,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { useCommentsStore } from "src/stores/comments";
 import { useI18n } from "vue-i18n";
@@ -164,7 +171,12 @@ const props = defineProps({
 
 const emit = defineEmits(["deleted"]);
 
+const router = useRouter();
 const authStore = useAuthStore();
+
+function goToUser(userName) {
+  if (userName) router.push({ name: "user-posts", params: { userName } });
+}
 const commentsStore = useCommentsStore();
 const { t } = useI18n();
 
@@ -178,8 +190,8 @@ const replyItems = ref([]);
 const currentUser = computed(() => authStore.user);
 const isOwner = computed(
   () =>
-    !!authStore.user?.identification &&
-    authStore.user.identification === props.comment.user?.identification
+    !!authStore.user?.userName &&
+    authStore.user.userName === props.comment.user?.userName
 );
 
 async function toggleReplies() {

@@ -142,14 +142,46 @@
           </div>
 
           <p class="text-white text-subtitle2 text-weight-bold q-mt-md q-mb-xs">
-            {{ user?.userName }}
+            {{ user?.identification }}
           </p>
           <p
             class="q-mb-none"
             style="font-size: 0.78rem; color: rgba(150, 170, 220, 0.55)"
           >
-            @{{ user?.identification }}
+            @{{ user?.userName }}
           </p>
+
+          <!-- Followers / Following counts -->
+          <div class="flex justify-center q-gutter-x-xl q-mt-md">
+            <div
+              class="text-center cursor-pointer"
+              @click="navigateProfile('followers')"
+            >
+              <div
+                class="text-white text-weight-bold"
+                style="font-size: 0.95rem; line-height: 1.2"
+              >
+                {{ followsStore.counts.followers }}
+              </div>
+              <div style="font-size: 0.7rem; color: rgba(150, 170, 220, 0.55)">
+                {{ $t("follows.followers") }}
+              </div>
+            </div>
+            <div
+              class="text-center cursor-pointer"
+              @click="navigateProfile('following')"
+            >
+              <div
+                class="text-white text-weight-bold"
+                style="font-size: 0.95rem; line-height: 1.2"
+              >
+                {{ followsStore.counts.following }}
+              </div>
+              <div style="font-size: 0.7rem; color: rgba(150, 170, 220, 0.55)">
+                {{ $t("follows.following") }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <q-separator
@@ -222,9 +254,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
+import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 
@@ -232,7 +265,10 @@ const $q = useQuasar();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const followsStore = useFollowsStore();
 const { t } = useI18n();
+
+onMounted(() => followsStore.loadCounts());
 
 const leftDrawer = ref(false);
 const rightDrawer = ref(false);
