@@ -2,7 +2,12 @@
   <q-page class="q-pa-md">
     <div class="feed-container">
       <p class="page-section-title q-mb-md">
-        <q-icon name="dynamic_feed" color="accent" size="20px" class="q-mr-sm" />
+        <q-icon
+          name="dynamic_feed"
+          color="accent"
+          size="20px"
+          class="q-mr-sm"
+        />
         {{ $t("feed.title") }}
       </p>
 
@@ -28,8 +33,16 @@
 
       <!-- User search results -->
       <template v-if="search">
-        <div v-if="followsStore.userResultsLoading && !followsStore.userResults.length">
-          <div v-for="i in 5" :key="i" class="flex items-center q-pa-sm q-mb-xs">
+        <div
+          v-if="
+            followsStore.userResultsLoading && !followsStore.userResults.length
+          "
+        >
+          <div
+            v-for="i in 5"
+            :key="i"
+            class="flex items-center q-pa-sm q-mb-xs"
+          >
             <q-skeleton type="QAvatar" size="44px" class="q-mr-md" />
             <div class="col">
               <q-skeleton type="text" width="38%" class="q-mb-xs" />
@@ -45,17 +58,28 @@
           class="follow-user-item q-mb-xs"
         >
           <div class="flex items-center q-pa-sm">
-            <q-avatar size="44px" color="primary" text-color="white" class="q-mr-md cursor-pointer" @click="goToUser(user.userName)">
+            <q-avatar
+              size="44px"
+              color="primary"
+              text-color="white"
+              class="q-mr-md cursor-pointer"
+              @click="goToUser(user.userName)"
+            >
               <img
                 v-if="user.avatarUrl"
                 :src="user.avatarUrl"
                 style="width: 100%; height: 100%; object-fit: cover"
               />
-              <span v-else>{{ user.identification?.[0]?.toUpperCase() || "?" }}</span>
+              <span v-else>{{
+                user.identification?.[0]?.toUpperCase() || "?"
+              }}</span>
             </q-avatar>
 
             <div class="col cursor-pointer" @click="goToUser(user.userName)">
-              <div class="text-white text-weight-medium" style="font-size: 0.93rem; line-height: 1.3">
+              <div
+                class="text-white text-weight-medium"
+                style="font-size: 0.93rem; line-height: 1.3"
+              >
                 {{ user.identification }}
               </div>
               <div style="font-size: 0.78rem; color: rgba(150, 170, 220, 0.55)">
@@ -68,7 +92,11 @@
               :outline="!user.isFollowing"
               :unelevated="user.isFollowing"
               color="accent"
-              :label="user.isFollowing ? $t('follows.following') : $t('follows.follow')"
+              :label="
+                user.isFollowing
+                  ? $t('follows.following')
+                  : $t('follows.follow')
+              "
               dense
               size="sm"
               class="q-px-sm"
@@ -79,7 +107,9 @@
         </div>
 
         <div
-          v-if="!followsStore.userResultsLoading && !followsStore.userResults.length"
+          v-if="
+            !followsStore.userResultsLoading && !followsStore.userResults.length
+          "
           class="flex flex-center column q-py-xl"
           style="color: rgba(150, 170, 220, 0.4)"
         >
@@ -92,7 +122,10 @@
       <template v-else>
         <PostComposer class="q-mb-md" />
 
-        <PostSkeleton v-if="postsStore.loading && !postsStore.items.length" :count="5" />
+        <PostSkeleton
+          v-if="postsStore.loading && !postsStore.items.length"
+          :count="5"
+        />
 
         <PostCard
           v-for="post in postsStore.items"
@@ -101,7 +134,10 @@
           @open="openPost"
         />
 
-        <div v-if="postsStore.pagination.hasNextPage" class="flex flex-center q-py-md">
+        <div
+          v-if="postsStore.pagination.hasNextPage"
+          class="flex flex-center q-py-md"
+        >
           <q-btn
             outline
             color="accent"
@@ -162,7 +198,10 @@ function openPost(post) {
 function onSearchInput() {
   clearTimeout(debounceTimer);
   if (!search.value) return;
-  debounceTimer = setTimeout(() => followsStore.fetchUserResults(search.value), 350);
+  debounceTimer = setTimeout(
+    () => followsStore.fetchUserResults(search.value),
+    350
+  );
 }
 
 function onClear() {

@@ -8,7 +8,11 @@
           size="20px"
           class="q-mr-sm"
         />
-        {{ isFollowers ? $t("follows.followersTitle") : $t("follows.followingTitle") }}
+        {{
+          isFollowers
+            ? $t("follows.followersTitle")
+            : $t("follows.followingTitle")
+        }}
       </p>
 
       <!-- Search filter -->
@@ -32,11 +36,7 @@
 
       <!-- Loading skeletons -->
       <div v-if="loading && !items.length">
-        <div
-          v-for="i in 5"
-          :key="i"
-          class="flex items-center q-pa-sm q-mb-xs"
-        >
+        <div v-for="i in 5" :key="i" class="flex items-center q-pa-sm q-mb-xs">
           <q-skeleton type="QAvatar" size="44px" class="q-mr-md" />
           <div class="col">
             <q-skeleton type="text" width="38%" class="q-mb-xs" />
@@ -88,9 +88,7 @@
             :unelevated="user.isFollowing"
             color="accent"
             :label="
-              user.isFollowing
-                ? $t('follows.following')
-                : $t('follows.follow')
+              user.isFollowing ? $t('follows.following') : $t('follows.follow')
             "
             dense
             size="sm"
@@ -118,10 +116,7 @@
         class="flex flex-center column q-py-xl"
         style="color: rgba(150, 170, 220, 0.4)"
       >
-        <q-icon
-          :name="isFollowers ? 'group' : 'person_add'"
-          size="56px"
-        />
+        <q-icon :name="isFollowers ? 'group' : 'person_add'" size="56px" />
         <p class="q-mt-md text-body2">
           {{
             isFollowers
@@ -163,14 +158,19 @@ const pagination = computed(() =>
     : followsStore.followingPagination
 );
 const loading = computed(() =>
-  isFollowers.value ? followsStore.followersLoading : followsStore.followingLoading
+  isFollowers.value
+    ? followsStore.followersLoading
+    : followsStore.followingLoading
 );
 
 onMounted(() => fetchList());
-watch(() => route.name, () => {
-  search.value = "";
-  fetchList();
-});
+watch(
+  () => route.name,
+  () => {
+    search.value = "";
+    fetchList();
+  }
+);
 
 function fetchList() {
   if (isFollowers.value) followsStore.fetchFollowers(1, 20, search.value);

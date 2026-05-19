@@ -20,6 +20,10 @@ export const PostsService = {
 
   getByUserName: (targetUserName, page = 1, pageSize = 20) =>
     api
-      .post("/api/v2/Posts/ByUserName", { targetUserName }, { params: { page, pageSize } })
+      .post(
+        "/api/v2/Posts/ByUserName",
+        { targetUserName },
+        { params: { page, pageSize } }
+      )
       .then((r) => r.data),
 };
