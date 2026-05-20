@@ -86,12 +86,10 @@ export default {
     replyPlaceholder: "Write a reply…",
     reply: "Reply",
     hide: "Hide",
-    view: "View",
     replyWord: "reply",
     repliesWord: "replies",
     replyError: "Failed to reply.",
     deleteError: "Failed to delete comment.",
-    deleteReplyError: "Failed to delete reply.",
     delete: "Delete comment",
   },
   notFound: {
@@ -101,9 +99,6 @@ export default {
   errors: {
     tooManyRequests: "Too many requests. Please slow down.",
     serverError: "Server error. Please try again later.",
-  },
-  lang: {
-    switch: "Language",
   },
   userPosts: {
     loadMore: "Load more",

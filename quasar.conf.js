@@ -46,7 +46,6 @@ module.exports = configure(function (ctx) {
       vueRouterMode: "hash", // available values: 'hash', 'history'
       env: {
         VUE_APP_API: process.env.VUE_APP_API,
-        TOKEN_IMGUR: process.env.IMGUR,
       },
 
       // transpile: false,
