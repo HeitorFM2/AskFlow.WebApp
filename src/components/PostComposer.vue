@@ -58,8 +58,6 @@ import { usePostsStore } from "src/stores/posts";
 import { useI18n } from "vue-i18n";
 import { Notify } from "quasar";
 
-const emit = defineEmits(["created"]);
-
 const authStore = useAuthStore();
 const postsStore = usePostsStore();
 const { t } = useI18n();
@@ -79,7 +77,6 @@ async function submit() {
     await postsStore.createPost(content.value.trim());
     content.value = "";
     Notify.create({ type: "positive", message: t("composer.created") });
-    emit("created");
   } catch (err) {
     const apiErr = err.response?.data;
     error.value =

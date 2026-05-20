@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { CommentsService } from "src/services/comments.service";
+import { usePostsStore } from "src/stores/posts";
+import { useUserPostsStore } from "src/stores/userPosts";
 
 export const useCommentsStore = defineStore("comments", () => {
   const byPost = ref({});
@@ -47,9 +49,15 @@ export const useCommentsStore = defineStore("comments", () => {
     }
   }
 
+  function updatePostCommentCount(postId, delta) {
+    usePostsStore().incrementComments(postId, delta);
+    useUserPostsStore().incrementComments(postId, delta);
+  }
+
   async function addComment(postId, content, parentCommentId = null) {
     await CommentsService.create(postId, { content, parentCommentId });
     await fetchByPost(postId, 1);
+    updatePostCommentCount(postId, 1);
   }
 
   async function addReply(postId, commentId, content) {
@@ -58,7 +66,12 @@ export const useCommentsStore = defineStore("comments", () => {
       parentCommentId: commentId,
     });
     await fetchReplies(commentId, 1);
-    await fetchByPost(postId, 1);
+    const list = byPost.value[postId];
+    if (list) {
+      const parent = list.items.find((c) => c.id === commentId);
+      if (parent) parent.replyCount = (parent.replyCount || 0) + 1;
+    }
+    updatePostCommentCount(postId, 1);
   }
 
   async function removeComment(postId, commentId) {
@@ -67,12 +80,23 @@ export const useCommentsStore = defineStore("comments", () => {
       byPost.value[postId].items = byPost.value[postId].items.filter(
         (c) => c.id !== commentId
       );
+      updatePostCommentCount(postId, -1);
     }
   }
 
   function getPostComments(postId) {
     return (
       byPost.value[postId] || { items: [], totalCount: 0, hasNextPage: false }
+    );
+  }
+
+  function getReplies(commentId) {
+    return (
+      replies.value[commentId] || {
+        items: [],
+        totalCount: 0,
+        hasNextPage: false,
+      }
     );
   }
 
@@ -84,5 +108,6 @@ export const useCommentsStore = defineStore("comments", () => {
     addReply,
     removeComment,
     getPostComments,
+    getReplies,
   };
 });

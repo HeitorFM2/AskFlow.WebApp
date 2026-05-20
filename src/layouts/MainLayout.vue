@@ -275,7 +275,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
@@ -284,7 +284,6 @@ import { i18n } from "src/i18n";
 
 const $q = useQuasar();
 const router = useRouter();
-const route = useRoute();
 const authStore = useAuthStore();
 const followsStore = useFollowsStore();
 const { t, locale } = useI18n();

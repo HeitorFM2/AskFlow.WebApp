@@ -46,6 +46,11 @@ export const useUserPostsStore = defineStore("userPosts", () => {
     }
   }
 
+  function incrementComments(postId, delta = 1) {
+    const post = items.value.find((p) => p.id === postId);
+    if (post) post.comments += delta;
+  }
+
   function reset() {
     items.value = [];
     profileUser.value = null;
@@ -57,9 +62,9 @@ export const useUserPostsStore = defineStore("userPosts", () => {
     pagination,
     loading,
     profileUser,
-    currentUserName,
     fetchPosts,
     loadMore,
     reset,
+    incrementComments,
   };
 });

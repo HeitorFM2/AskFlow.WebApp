@@ -66,7 +66,6 @@
       :key="comment.id"
       :comment="comment"
       :post-id="postId"
-      @deleted="reload"
     />
 
     <!-- Load more -->
