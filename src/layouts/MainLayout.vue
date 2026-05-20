@@ -4,13 +4,7 @@
     <div
       class="mobile-topbar flex justify-between items-center q-pa-sm q-px-md lt-md"
     >
-      <span
-        class="nav-brand"
-        style="font-size: 1.1rem; cursor: pointer"
-        @click="navigate('feed')"
-        >&lt; AskFlow /&gt;</span
-      >
-      <div class="flex q-gutter-x-xs">
+      <div class="flex items-center q-gutter-x-xs">
         <q-btn
           flat
           round
@@ -19,15 +13,30 @@
           color="accent"
           @click="leftDrawer = true"
         />
-        <q-btn
-          flat
-          round
-          dense
-          icon="person"
-          color="accent"
-          @click="rightDrawer = true"
-        />
+        <span
+          class="nav-brand"
+          style="font-size: 1.1rem; cursor: pointer"
+          @click="navigate('feed')"
+          >&lt; AskFlow /&gt;</span
+        >
       </div>
+      <q-avatar
+        size="36px"
+        color="primary"
+        text-color="white"
+        class="text-subtitle1 cursor-pointer"
+        style="border: 1.5px solid rgba(79, 134, 247, 0.4)"
+        @click="rightDrawer = true"
+      >
+        <img
+          v-if="user?.avatarUrl"
+          :src="user.avatarUrl"
+          style="width: 100%; height: 100%; object-fit: cover"
+        />
+        <span v-else>{{
+          user?.identification?.[0]?.toUpperCase() || "?"
+        }}</span>
+      </q-avatar>
     </div>
 
     <!-- Left nav drawer (Feed only) -->
@@ -89,8 +98,19 @@
       class="profile-drawer"
     >
       <div class="column fit" style="height: 100%">
-        <!-- Close button (mobile) -->
-        <div class="flex justify-end q-pa-sm lt-md">
+        <!-- Header row: lang toggle (left) + close (right) — mobile only -->
+        <div class="flex justify-between items-center q-pa-sm lt-md">
+          <q-btn
+            flat
+            round
+            dense
+            @click="toggleLang"
+            style="min-width: 34px; min-height: 34px"
+          >
+            <span style="font-size: 1.2rem; line-height: 1">{{
+              locale === "pt-BR" ? "🇧🇷" : "🇺🇸"
+            }}</span>
+          </q-btn>
           <q-btn
             flat
             round
@@ -260,13 +280,14 @@ import { useAuthStore } from "src/stores/auth";
 import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
+import { i18n } from "src/i18n";
 
 const $q = useQuasar();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const followsStore = useFollowsStore();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 onMounted(() => followsStore.loadCounts());
 
@@ -325,6 +346,13 @@ async function uploadAvatar(event) {
     uploadingAvatar.value = false;
     event.target.value = "";
   }
+}
+
+function toggleLang() {
+  const next = locale.value === "pt-BR" ? "en" : "pt-BR";
+  locale.value = next;
+  i18n.global.locale.value = next;
+  localStorage.setItem("locale", next);
 }
 
 function confirmLogout() {
