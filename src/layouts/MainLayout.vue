@@ -33,7 +33,9 @@
           :src="user.avatarUrl"
           style="width: 100%; height: 100%; object-fit: cover"
         />
-        <span v-else>{{ user?.identification?.[0]?.toUpperCase() || "?" }}</span>
+        <span v-else>{{
+          user?.identification?.[0]?.toUpperCase() || "?"
+        }}</span>
       </q-avatar>
     </div>
 
@@ -98,7 +100,13 @@
       <div class="column fit" style="height: 100%">
         <!-- Header row: lang toggle (left) + close (right) — mobile only -->
         <div class="flex justify-between items-center q-pa-sm lt-md">
-          <q-btn flat round dense @click="toggleLang" style="min-width: 34px; min-height: 34px">
+          <q-btn
+            flat
+            round
+            dense
+            @click="toggleLang"
+            style="min-width: 34px; min-height: 34px"
+          >
             <span style="font-size: 1.2rem; line-height: 1">{{
               locale === "pt-BR" ? "🇧🇷" : "🇺🇸"
             }}</span>
