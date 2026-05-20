@@ -86,12 +86,10 @@ export default {
     replyPlaceholder: "Escreva uma resposta…",
     reply: "Responder",
     hide: "Ocultar",
-    view: "Ver",
     replyWord: "resposta",
     repliesWord: "respostas",
     replyError: "Erro ao responder.",
     deleteError: "Erro ao deletar comentário.",
-    deleteReplyError: "Erro ao deletar resposta.",
     delete: "Deletar comentário",
   },
   notFound: {
@@ -101,9 +99,6 @@ export default {
   errors: {
     tooManyRequests: "Muitas requisições. Por favor, aguarde.",
     serverError: "Erro no servidor. Tente novamente mais tarde.",
-  },
-  lang: {
-    switch: "Idioma",
   },
   userPosts: {
     loadMore: "Carregar mais",

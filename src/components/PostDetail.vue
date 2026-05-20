@@ -28,7 +28,7 @@
       <template v-else-if="post">
         <!-- Author -->
         <q-item class="q-pa-none q-mb-md">
-          <q-item-section avatar @click="goToUser(post.user?.userName)">
+          <q-item-section avatar @click="goToUser(post.user)">
             <q-avatar color="primary" text-color="white" class="cursor-pointer">
               <img
                 v-if="post.user?.avatarUrl"
@@ -44,13 +44,13 @@
             <q-item-label style="font-size: 0.9rem; line-height: 1.3">
               <span
                 class="text-white text-weight-semibold cursor-pointer"
-                @click="goToUser(post.user?.userName)"
+                @click="goToUser(post.user)"
                 >{{ post.user?.identification }}</span
               >
               <span
                 style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
                 class="cursor-pointer"
-                @click="goToUser(post.user?.userName)"
+                @click="goToUser(post.user)"
               >
                 @{{ post.user?.userName }}</span
               >
@@ -119,7 +119,7 @@
         />
 
         <!-- Comments section -->
-        <CommentList :post-id="post.id" @count-change="commentCount = $event" />
+        <CommentList :post-id="post.id" />
       </template>
     </div>
   </q-dialog>
@@ -129,6 +129,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { usePostsStore } from "src/stores/posts";
+import { useCommentsStore } from "src/stores/comments";
 import { useAuthStore } from "src/stores/auth";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -145,11 +146,16 @@ const emit = defineEmits(["update:modelValue", "deleted"]);
 
 const router = useRouter();
 const postsStore = usePostsStore();
+const commentsStore = useCommentsStore();
 
-function goToUser(userName) {
-  if (!userName) return;
+function goToUser(user) {
+  if (!user?.userName) return;
   show.value = false;
-  router.push({ name: "user-posts", params: { userName } });
+  router.push({
+    name: "user-posts",
+    params: { userName: user.userName },
+    state: { profileUser: JSON.stringify(user) },
+  });
 }
 const authStore = useAuthStore();
 const $q = useQuasar();
@@ -164,7 +170,9 @@ const isOwner = computed(
 const liking = ref(false);
 const localLiked = ref(false);
 const localLikes = ref(0);
-const commentCount = ref(0);
+const commentCount = computed(
+  () => commentsStore.getPostComments(props.postId).totalCount
+);
 
 const show = computed({
   get: () => props.modelValue,
@@ -177,9 +185,6 @@ function syncFromPost() {
   if (post.value) {
     localLiked.value = post.value.isLiked;
     localLikes.value = post.value.likes;
-    commentCount.value = Array.isArray(post.value.comments)
-      ? post.value.comments.length
-      : 0;
   }
 }
 

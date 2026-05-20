@@ -153,6 +153,8 @@ watch(
 
 onMounted(() => {
   store.reset();
+  const stateUser = history.state?.profileUser;
+  if (stateUser) store.profileUser = JSON.parse(stateUser);
   store.fetchPosts(route.params.userName);
 });
 

@@ -7,8 +7,5 @@ export const AuthService = {
   register: (payload) =>
     api.post("/api/v2/Auth/Register", payload).then((r) => r.data),
 
-  refreshToken: (refreshToken) =>
-    api.post("/api/v2/Auth/RefreshToken", { refreshToken }).then((r) => r.data),
-
   logout: () => api.post("/api/v2/Auth/Logout").then((r) => r.data),
 };

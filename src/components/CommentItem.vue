@@ -7,7 +7,7 @@
         color="primary"
         text-color="white"
         class="tw-avatar cursor-pointer"
-        @click="goToUser(comment.user?.userName)"
+        @click="goToUser(comment.user)"
       >
         <img
           v-if="comment.user?.avatarUrl"
@@ -33,13 +33,13 @@
         <span
           class="text-white text-weight-semibold cursor-pointer"
           style="font-size: 0.87rem"
-          @click="goToUser(comment.user?.userName)"
+          @click="goToUser(comment.user)"
           >{{ comment.user?.identification }}</span
         >
         <span
           style="color: rgba(150, 170, 220, 0.45); font-size: 0.78rem"
           class="cursor-pointer"
-          @click="goToUser(comment.user?.userName)"
+          @click="goToUser(comment.user)"
         >
           @{{ comment.user?.userName }}</span
         >
@@ -174,8 +174,13 @@ const emit = defineEmits(["deleted"]);
 const router = useRouter();
 const authStore = useAuthStore();
 
-function goToUser(userName) {
-  if (userName) router.push({ name: "user-posts", params: { userName } });
+function goToUser(user) {
+  if (user?.userName)
+    router.push({
+      name: "user-posts",
+      params: { userName: user.userName },
+      state: { profileUser: JSON.stringify(user) },
+    });
 }
 const commentsStore = useCommentsStore();
 const { t } = useI18n();
@@ -218,14 +223,8 @@ async function submitReply() {
     );
     replyContent.value = "";
     showReplyInput.value = false;
-    repliesLoading.value = true;
-    try {
-      const result = await commentsStore.fetchReplies(props.comment.id);
-      replyItems.value = result.items;
-      showReplies.value = true;
-    } finally {
-      repliesLoading.value = false;
-    }
+    replyItems.value = commentsStore.getReplies(props.comment.id).items;
+    showReplies.value = true;
   } catch (_) {
     Notify.create({ type: "negative", message: t("comments.replyError") });
   } finally {
