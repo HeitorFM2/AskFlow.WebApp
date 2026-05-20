@@ -44,4 +44,10 @@ function toggle() {
   font-size: 1.25rem;
   line-height: 1;
 }
+
+@media (max-width: 1023px) {
+  .lang-toggle {
+    display: none !important;
+  }
+}
 </style>
