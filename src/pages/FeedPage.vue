@@ -63,7 +63,7 @@
               color="primary"
               text-color="white"
               class="q-mr-md cursor-pointer"
-              @click="goToUser(user.userName)"
+              @click="goToUser(user)"
             >
               <img
                 v-if="user.avatarUrl"
@@ -75,7 +75,7 @@
               }}</span>
             </q-avatar>
 
-            <div class="col cursor-pointer" @click="goToUser(user.userName)">
+            <div class="col cursor-pointer" @click="goToUser(user)">
               <div
                 class="text-white text-weight-medium"
                 style="font-size: 0.93rem; line-height: 1.3"
@@ -178,8 +178,13 @@ const postsStore = usePostsStore();
 const followsStore = useFollowsStore();
 const authStore = useAuthStore();
 
-function goToUser(userName) {
-  if (userName) router.push({ name: "user-posts", params: { userName } });
+function goToUser(user) {
+  if (user?.userName)
+    router.push({
+      name: "user-posts",
+      params: { userName: user.userName },
+      state: { profileUser: JSON.stringify(user) },
+    });
 }
 
 const detailOpen = ref(false);

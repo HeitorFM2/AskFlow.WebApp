@@ -1,7 +1,7 @@
 <template>
   <q-card class="post-card q-mb-sm cursor-pointer" @click="emit('open', post)">
     <q-item class="q-pt-md q-pb-xs">
-      <q-item-section avatar @click.stop="goToUser(post.user?.userName)">
+      <q-item-section avatar @click.stop="goToUser(post.user)">
         <q-avatar color="primary" text-color="white" class="cursor-pointer">
           <img
             v-if="post.user?.avatarUrl"
@@ -18,13 +18,13 @@
         <q-item-label style="font-size: 0.9rem; line-height: 1.3">
           <span
             class="text-white text-weight-semibold cursor-pointer"
-            @click.stop="goToUser(post.user?.userName)"
+            @click.stop="goToUser(post.user)"
             >{{ post.user?.identification }}</span
           >
           <span
             style="color: rgba(150, 170, 220, 0.5); font-size: 0.8rem"
             class="cursor-pointer"
-            @click.stop="goToUser(post.user?.userName)"
+            @click.stop="goToUser(post.user)"
           >
             @{{ post.user?.userName }}</span
           >
@@ -122,8 +122,13 @@ const postsStore = usePostsStore();
 const followsStore = useFollowsStore();
 const { t } = useI18n();
 
-function goToUser(userName) {
-  if (userName) router.push({ name: "user-posts", params: { userName } });
+function goToUser(user) {
+  if (user?.userName)
+    router.push({
+      name: "user-posts",
+      params: { userName: user.userName },
+      state: { profileUser: JSON.stringify(user) },
+    });
 }
 
 const liking = ref(false);

@@ -71,6 +71,11 @@ export const usePostsStore = defineStore("posts", () => {
     }
   }
 
+  function incrementComments(postId, delta = 1) {
+    const post = items.value.find((p) => p.id === postId);
+    if (post) post.comments += delta;
+  }
+
   function loadMore() {
     if (pagination.value.hasNextPage) {
       fetchFeed(pagination.value.page + 1, pagination.value.pageSize);
@@ -87,6 +92,7 @@ export const usePostsStore = defineStore("posts", () => {
     createPost,
     deletePost,
     toggleLike,
+    incrementComments,
     loadMore,
   };
 });
