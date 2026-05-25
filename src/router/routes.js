@@ -17,6 +17,11 @@ const routes = [
         component: () => import("pages/FeedPage.vue"),
       },
       {
+        path: "following-feed",
+        name: "following-feed",
+        component: () => import("pages/FollowingFeedPage.vue"),
+      },
+      {
         path: "liked",
         name: "liked",
         component: () => import("pages/LikedPage.vue"),

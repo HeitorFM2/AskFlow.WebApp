@@ -59,11 +59,53 @@
               >
             </q-item-label>
           </q-item-section>
-          <q-item-section side v-if="isOwner">
-            <q-btn flat round dense size="sm" icon="more_vert" color="grey-5">
-              <q-menu anchor="bottom right" self="top right" dark>
+          <q-item-section side>
+            <q-btn
+              flat
+              round
+              dense
+              size="sm"
+              icon="more_vert"
+              color="grey-5"
+              :loading="checkingFollow"
+              @click="openMenu"
+            >
+              <q-menu
+                ref="menuRef"
+                v-model="menuOpen"
+                no-parent-event
+                anchor="bottom right"
+                self="top right"
+                dark
+              >
                 <q-list style="min-width: 140px">
-                  <q-item clickable v-close-popup dense @click="confirmDelete">
+                  <q-item
+                    v-if="!isOwner"
+                    clickable
+                    v-close-popup
+                    dense
+                    :disable="following"
+                    @click="toggleFollow"
+                  >
+                    <q-item-section style="font-size: 0.85rem">
+                      {{
+                        localIsFollowing
+                          ? $t("follows.unfollowUser", {
+                              user: "@" + post.user?.userName,
+                            })
+                          : $t("follows.followUser", {
+                              user: "@" + post.user?.userName,
+                            })
+                      }}
+                    </q-item-section>
+                  </q-item>
+                  <q-item
+                    v-if="isOwner"
+                    clickable
+                    v-close-popup
+                    dense
+                    @click="confirmDelete"
+                  >
                     <q-item-section style="color: #ef4444; font-size: 0.85rem">
                       {{ $t("post.deleteTooltip") }}
                     </q-item-section>
@@ -131,9 +173,11 @@ import { useRouter } from "vue-router";
 import { usePostsStore } from "src/stores/posts";
 import { useCommentsStore } from "src/stores/comments";
 import { useAuthStore } from "src/stores/auth";
+import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { LikesService } from "src/services/likes.service";
+import { FollowsService } from "src/services/follows.service";
 import { formatPostDate } from "src/util/date";
 import CommentList from "./CommentList.vue";
 
@@ -147,6 +191,7 @@ const emit = defineEmits(["update:modelValue", "deleted"]);
 const router = useRouter();
 const postsStore = usePostsStore();
 const commentsStore = useCommentsStore();
+const followsStore = useFollowsStore();
 
 function goToUser(user) {
   if (!user?.userName) return;
@@ -166,6 +211,12 @@ const isOwner = computed(
     !!authStore.user?.userName &&
     authStore.user.userName === post.value?.user?.userName
 );
+
+const menuRef = ref(null);
+const menuOpen = ref(false);
+const checkingFollow = ref(false);
+const following = ref(false);
+const localIsFollowing = ref(null);
 
 const liking = ref(false);
 const localLiked = ref(false);
@@ -194,6 +245,46 @@ watch([() => props.modelValue, () => props.postId], async ([open, id]) => {
     syncFromPost();
   }
 });
+
+async function openMenu() {
+  if (menuOpen.value) {
+    menuRef.value.hide();
+    return;
+  }
+  if (
+    !isOwner.value &&
+    post.value?.user?.userName &&
+    localIsFollowing.value === null
+  ) {
+    checkingFollow.value = true;
+    try {
+      localIsFollowing.value = await FollowsService.isFollowing(
+        post.value.user.userName
+      );
+    } finally {
+      checkingFollow.value = false;
+    }
+  }
+  menuRef.value.show();
+}
+
+async function toggleFollow() {
+  if (!post.value?.user) return;
+  const prev = localIsFollowing.value;
+  localIsFollowing.value = !prev;
+  following.value = true;
+  try {
+    await followsStore.toggleFollow(
+      post.value.user.id,
+      post.value.user.userName,
+      prev
+    );
+  } catch (_) {
+    localIsFollowing.value = prev;
+  } finally {
+    following.value = false;
+  }
+}
 
 function confirmDelete() {
   $q.dialog({

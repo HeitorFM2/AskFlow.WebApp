@@ -1,6 +1,7 @@
 export default {
   nav: {
     feed: "Feed",
+    followingFeed: "Following",
     likes: "Likes",
     myPosts: "My posts",
     logout: "Sign out",
@@ -11,6 +12,15 @@ export default {
     photoUpdated: "Photo updated!",
     photoError: "Failed to update photo.",
     imageTooLarge: "Image must be under 3 MB.",
+    editTitle: "Edit profile",
+    editIdentification: "Name",
+    editUserName: "Username",
+    editSave: "Save",
+    editSuccess: "Profile updated!",
+    editError: "Failed to update profile.",
+    errorIdentificationRequired: "Name is required.",
+    errorUserNameRequired: "Username is required.",
+    errorUserNameInvalid: "Letters, numbers and underscores only.",
   },
   logout: {
     title: "Sign out",
@@ -24,6 +34,11 @@ export default {
     empty: "No posts yet. Be the first to post!",
     searchUsers: "Search users…",
     noUsersFound: "No users found.",
+  },
+  followingFeed: {
+    title: "Posts from people you follow",
+    loadMore: "Load more",
+    empty: "Nothing here yet. Follow someone to see their posts.",
   },
   liked: {
     title: "Liked posts",
@@ -108,6 +123,8 @@ export default {
     followers: "Followers",
     following: "Following",
     follow: "Follow",
+    followUser: "Follow {user}",
+    unfollowUser: "Unfollow {user}",
     followersTitle: "Followers",
     followingTitle: "Following",
     loadMore: "Load more",
