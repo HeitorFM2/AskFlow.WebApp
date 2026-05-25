@@ -18,6 +18,11 @@ export const PostsService = {
       .get("/api/v2/Posts/Me", { params: { page, pageSize } })
       .then((r) => r.data),
 
+  getFollowing: (page = 1, pageSize = 20) =>
+    api
+      .get("/api/v2/Posts/Following", { params: { page, pageSize } })
+      .then((r) => r.data),
+
   getByUserName: (targetUserName, page = 1, pageSize = 20) =>
     api
       .post(

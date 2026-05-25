@@ -1,6 +1,7 @@
 export default {
   nav: {
     feed: "Feed",
+    followingFeed: "Seguindo",
     likes: "Curtidos",
     myPosts: "Minhas postagens",
     logout: "Sair",
@@ -11,6 +12,15 @@ export default {
     photoUpdated: "Foto atualizada!",
     photoError: "Erro ao atualizar a foto.",
     imageTooLarge: "A imagem deve ter menos de 3 MB.",
+    editTitle: "Editar perfil",
+    editIdentification: "Nome",
+    editUserName: "Nome de usuário",
+    editSave: "Salvar",
+    editSuccess: "Perfil atualizado!",
+    editError: "Erro ao atualizar perfil.",
+    errorIdentificationRequired: "Nome é obrigatório.",
+    errorUserNameRequired: "Nome de usuário é obrigatório.",
+    errorUserNameInvalid: "Apenas letras, números e underscores.",
   },
   logout: {
     title: "Sair",
@@ -24,6 +34,11 @@ export default {
     empty: "Nenhum post ainda. Seja o primeiro a postar!",
     searchUsers: "Buscar usuários…",
     noUsersFound: "Nenhum usuário encontrado.",
+  },
+  followingFeed: {
+    title: "Postagens de quem você segue",
+    loadMore: "Carregar mais",
+    empty: "Nenhum post ainda. Siga alguém para ver as postagens aqui.",
   },
   liked: {
     title: "Posts curtidos",
@@ -108,6 +123,8 @@ export default {
     followers: "Seguidores",
     following: "Seguindo",
     follow: "Seguir",
+    followUser: "Seguir {user}",
+    unfollowUser: "Deixar de seguir {user}",
     followersTitle: "Seguidores",
     followingTitle: "Seguindo",
     loadMore: "Carregar mais",

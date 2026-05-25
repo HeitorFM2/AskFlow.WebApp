@@ -6,6 +6,12 @@ export const FollowsService = {
 
   getStats: () => api.get("/api/v2/Follows/Stats").then((r) => r.data),
 
+  isFollowing: (userName) =>
+    api.get(`/api/v2/Follows/IsFollowing/${userName}`).then((r) => {
+      const d = r.data;
+      return typeof d === "boolean" ? d : !!d.isFollowing;
+    }),
+
   getFollowers: (page = 1, pageSize = 20, search = "") =>
     api
       .get("/api/v2/Follows/Followers", {
