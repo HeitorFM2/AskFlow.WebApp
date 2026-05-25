@@ -58,6 +58,12 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function updateProfile(userName, identification) {
+    await UsersService.updateProfile({ userName, identification });
+    user.value = { ...user.value, userName, identification };
+    localStorage.setItem(KEY_USER, JSON.stringify(user.value));
+  }
+
   function _clear() {
     accessToken.value = null;
     user.value = null;
@@ -74,5 +80,6 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     logout,
     updateAvatar,
+    updateProfile,
   };
 });

@@ -161,9 +161,20 @@
             }}</span>
           </div>
 
-          <p class="text-white text-subtitle2 text-weight-bold q-mt-md q-mb-xs">
-            {{ user?.identification }}
-          </p>
+          <div class="flex items-center q-mt-md q-mb-xs" style="gap: 4px">
+            <p class="text-white text-subtitle2 text-weight-bold q-mb-none">
+              {{ user?.identification }}
+            </p>
+            <q-btn
+              flat
+              round
+              dense
+              size="xs"
+              icon="edit"
+              color="grey-5"
+              @click="editProfileOpen = true"
+            />
+          </div>
           <p
             class="q-mb-none"
             style="font-size: 0.78rem; color: rgba(150, 170, 220, 0.55)"
@@ -270,6 +281,8 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <EditProfileModal v-model="editProfileOpen" />
   </q-layout>
 </template>
 
@@ -281,6 +294,7 @@ import { useFollowsStore } from "src/stores/follows";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { i18n } from "src/i18n";
+import EditProfileModal from "src/components/EditProfileModal.vue";
 
 const $q = useQuasar();
 const router = useRouter();
@@ -294,11 +308,18 @@ const leftDrawer = ref(false);
 const rightDrawer = ref(false);
 const avatarInput = ref(null);
 const uploadingAvatar = ref(false);
+const editProfileOpen = ref(false);
 
 const user = computed(() => authStore.user);
 
 const navItems = [
   { key: "feed", labelKey: "nav.feed", route: "feed", icon: "dynamic_feed" },
+  {
+    key: "following-feed",
+    labelKey: "nav.followingFeed",
+    route: "following-feed",
+    icon: "group",
+  },
 ];
 
 const profileNavItems = [

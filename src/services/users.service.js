@@ -4,6 +4,9 @@ export const UsersService = {
   getAll: (search = "") =>
     api.get("/api/v2/Users", { params: { search } }).then((r) => r.data),
 
+  updateProfile: (payload) =>
+    api.put("/api/v2/Users", payload).then((r) => r.data),
+
   updateAvatar: (file) => {
     const form = new FormData();
     form.append("file", file);
