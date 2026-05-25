@@ -34,35 +34,59 @@
         </q-item-label>
       </q-item-section>
 
-      <q-item-section v-if="!isOwner && !hideFollow" side>
-        <q-btn
-          :outline="!localIsFollowing"
-          :unelevated="localIsFollowing"
-          color="accent"
-          :label="
-            localIsFollowing ? $t('follows.following') : $t('follows.follow')
-          "
-          dense
-          size="xs"
-          style="font-size: 0.7rem; min-width: 60px"
-          :loading="following"
-          @click.stop="toggleFollow"
-        />
-      </q-item-section>
-
-      <q-item-section v-if="isOwner" side>
+      <q-item-section v-if="isOwner || !hideFollow" side>
         <q-btn
           flat
           round
           dense
           size="sm"
-          icon="delete_outline"
-          color="negative"
-          @click.stop="confirmDelete"
+          icon="more_vert"
+          color="grey-5"
+          :loading="checkingFollow"
+          @click.stop="openMenu"
         >
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 4]">
-            {{ t("post.deleteTooltip") }}
-          </q-tooltip>
+          <q-menu
+            ref="menuRef"
+            v-model="menuOpen"
+            no-parent-event
+            anchor="bottom right"
+            self="top right"
+            dark
+          >
+            <q-list style="min-width: 140px">
+              <q-item
+                v-if="!isOwner"
+                clickable
+                v-close-popup
+                dense
+                :disable="following"
+                @click.stop="toggleFollow"
+              >
+                <q-item-section style="font-size: 0.85rem">
+                  {{
+                    localIsFollowing
+                      ? $t("follows.unfollowUser", {
+                          user: "@" + post.user?.userName,
+                        })
+                      : $t("follows.followUser", {
+                          user: "@" + post.user?.userName,
+                        })
+                  }}
+                </q-item-section>
+              </q-item>
+              <q-item
+                v-if="isOwner"
+                clickable
+                v-close-popup
+                dense
+                @click.stop="confirmDelete"
+              >
+                <q-item-section style="color: #ef4444; font-size: 0.85rem">
+                  {{ t("post.deleteTooltip") }}
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
         </q-btn>
       </q-item-section>
     </q-item>
@@ -104,6 +128,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { usePostsStore } from "src/stores/posts";
 import { useFollowsStore } from "src/stores/follows";
+import { FollowsService } from "src/services/follows.service";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { formatPostDate } from "src/util/date";
@@ -131,15 +156,40 @@ function goToUser(user) {
     });
 }
 
+const menuRef = ref(null);
+const menuOpen = ref(false);
 const liking = ref(false);
 const following = ref(false);
-const localIsFollowing = ref(props.post.user?.isFollowing ?? false);
+const checkingFollow = ref(false);
+const localIsFollowing = ref(null);
 
 const isOwner = computed(
   () =>
     !!authStore.user?.userName &&
     authStore.user.userName === props.post.user?.userName
 );
+
+async function openMenu() {
+  if (menuOpen.value) {
+    menuRef.value.hide();
+    return;
+  }
+  if (
+    !isOwner.value &&
+    props.post.user?.userName &&
+    localIsFollowing.value === null
+  ) {
+    checkingFollow.value = true;
+    try {
+      localIsFollowing.value = await FollowsService.isFollowing(
+        props.post.user.userName
+      );
+    } finally {
+      checkingFollow.value = false;
+    }
+  }
+  menuRef.value.show();
+}
 
 async function toggleFollow() {
   const prev = localIsFollowing.value;

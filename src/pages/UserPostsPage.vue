@@ -62,7 +62,7 @@
           size="md"
           class="q-px-lg"
           style="font-weight: 600; border-radius: 20px"
-          :loading="followLoading"
+          :loading="followLoading || checkingFollow"
           @click="onToggleFollow"
         />
       </div>
@@ -116,6 +116,7 @@ import { useRoute } from "vue-router";
 import { useAuthStore } from "src/stores/auth";
 import { useFollowsStore } from "src/stores/follows";
 import { useUserPostsStore } from "src/stores/userPosts";
+import { FollowsService } from "src/services/follows.service";
 import PostCard from "src/components/PostCard.vue";
 import PostDetail from "src/components/PostDetail.vue";
 import PostSkeleton from "src/components/PostSkeleton.vue";
@@ -129,17 +130,21 @@ const detailOpen = ref(false);
 const selectedPostId = ref(null);
 const localIsFollowing = ref(false);
 const followLoading = ref(false);
+const checkingFollow = ref(false);
 
 const isOwnProfile = computed(
   () => route.params.userName === authStore.user?.userName
 );
 
-watch(
-  () => store.profileUser,
-  (user) => {
-    if (user) localIsFollowing.value = user.isFollowing ?? false;
+async function checkIsFollowing(userName) {
+  if (isOwnProfile.value || !userName) return;
+  checkingFollow.value = true;
+  try {
+    localIsFollowing.value = await FollowsService.isFollowing(userName);
+  } finally {
+    checkingFollow.value = false;
   }
-);
+}
 
 watch(
   () => route.params.userName,
@@ -147,6 +152,7 @@ watch(
     if (userName) {
       store.reset();
       store.fetchPosts(userName);
+      checkIsFollowing(userName);
     }
   }
 );
@@ -156,6 +162,7 @@ onMounted(() => {
   const stateUser = history.state?.profileUser;
   if (stateUser) store.profileUser = JSON.parse(stateUser);
   store.fetchPosts(route.params.userName);
+  checkIsFollowing(route.params.userName);
 });
 
 function openPost(post) {
