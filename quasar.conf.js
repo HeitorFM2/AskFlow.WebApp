@@ -43,7 +43,7 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
-      vueRouterMode: "hash", // available values: 'hash', 'history'
+      vueRouterMode: "history", // available values: 'hash', 'history'
       env: {
         VUE_APP_API: process.env.VUE_APP_API,
       },
@@ -81,6 +81,7 @@ module.exports = configure(function (ctx) {
       },
       port: 8080,
       open: true, // opens browser window automatically
+      historyApiFallback: true,
     },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
