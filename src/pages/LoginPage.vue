@@ -161,6 +161,23 @@
             </p>
 
             <p
+              v-if="isLogin"
+              class="full-width text-right q-mb-none"
+              style="
+                font-size: 0.95rem;
+                color: rgba(150, 170, 220, 0.6);
+                margin-top: -6px;
+              "
+            >
+              <span
+                class="text-accent cursor-pointer text-weight-medium"
+                @click="router.push({ name: 'forgot-password' })"
+              >
+                {{ $t("login.forgotPassword") }}
+              </span>
+            </p>
+
+            <p
               v-if="errorMsg"
               class="text-negative text-center q-mb-none"
               style="font-size: 0.88rem"

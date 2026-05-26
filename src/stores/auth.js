@@ -50,6 +50,18 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem(KEY_USER, JSON.stringify(data.user));
   }
 
+  async function resetPassword(email, token, newPassword, confirmPassword) {
+    await AuthService.resetPassword({
+      email,
+      token,
+      newPassword,
+      confirmPassword,
+    });
+    const data = await AuthService.login({ email, password: newPassword });
+    _persist(data);
+    return data;
+  }
+
   async function updateAvatar(file) {
     const avatarUrl = await UsersService.updateAvatar(file);
     if (user.value && avatarUrl) {
@@ -79,6 +91,7 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     register,
     logout,
+    resetPassword,
     updateAvatar,
     updateProfile,
   };
