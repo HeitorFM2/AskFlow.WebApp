@@ -14,7 +14,7 @@ function redirectToLogin() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
-  window.location.href = "/#/login";
+  window.location.href = "/login";
 }
 
 const api = axios.create({
@@ -42,6 +42,7 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !original._retry &&
+      !original.url?.includes("/Auth/Login") &&
       !original.url?.includes("/Auth/Logout")
     ) {
       if (isRefreshing) {
